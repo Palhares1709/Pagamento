@@ -18,10 +18,9 @@
             100% { transform: scale(1); }
         }
 
-        /* PERMITIR ROLAGEM: Ajuste fundamental para mobile */
         html, body { 
             overflow-x: hidden; 
-            overflow-y: auto; /* Reativa a rolagem vertical */
+            overflow-y: auto; 
             width: 100%; 
             min-height: 100%; 
             margin: 0; 
@@ -33,8 +32,8 @@
             color: white; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; /* Alinha ao topo para permitir rolagem natural */
-            padding: 40px 15px; /* Espaço extra no topo e base */
+            align-items: flex-start; 
+            padding: 40px 15px; 
         }
 
         .container { 
@@ -47,12 +46,7 @@
             animation: slideUp 0.6s ease-out;
         }
 
-        .pix-logo-svg {
-            width: 85px;
-            height: auto;
-            margin-bottom: 15px;
-            display: block;
-        }
+        .pix-logo-svg { width: 85px; height: auto; margin-bottom: 15px; display: block; }
 
         .pix-badge {
             background: rgba(255, 255, 255, 0.07);
@@ -93,7 +87,6 @@
         }
 
         .qr-code { width: 160px; height: 160px; display: block; }
-        
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
         .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin: 0; }
 
@@ -108,9 +101,38 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        .footer { margin-top: 30px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
+        /* Estilo para a Lista de Bancos */
+        #bank-selector {
+            width: 100%;
+            margin-top: 25px;
+            display: none; /* Escondido até clicar em copiar */
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .bank-title { font-size: 13px; color: #888; margin-bottom: 15px; }
+
+        .bank-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .bank-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 12px 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .bank-item:active { transform: scale(0.9); background: rgba(100, 210, 193, 0.1); }
+        .bank-icon { font-size: 20px; display: block; margin-bottom: 5px; }
+        .bank-name { font-size: 10px; color: #ccc; font-weight: 600; }
+
+        .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
-        
         input {
             width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; 
             background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; 
@@ -121,6 +143,7 @@
 <body>
 
 <div class="container">
+    <!-- Logo Pix SVG -->
     <svg class="pix-logo-svg" viewBox="0 0 132 46" xmlns="http://www.w3.org/2000/svg">
         <path d="M53.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#FFF"/>
         <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
@@ -147,8 +170,33 @@
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
         </div>
-        <p style="color: #666; font-size: 12px; margin: 15px 0 0;">Toque abaixo para copiar:</p>
+        
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
+
+        <!-- Seletor de Bancos que aparece após copiar -->
+        <div id="bank-selector">
+            <div class="bank-title">Código copiado! Escolha seu banco:</div>
+            <div class="bank-grid">
+                <a href="nubank://" class="bank-item">
+                    <span class="bank-icon">💜</span><span class="bank-name">Nubank</span>
+                </a>
+                <a href="itau://" class="bank-item">
+                    <span class="bank-icon">🧡</span><span class="bank-name">Itaú</span>
+                </a>
+                <a href="bradesco://" class="bank-item">
+                    <span class="bank-icon">❤️</span><span class="bank-name">Bradesco</span>
+                </a>
+                <a href="santander://" class="bank-item">
+                    <span class="bank-icon">🔴</span><span class="bank-name">Santander</span>
+                </a>
+                <a href="inter://" class="bank-item">
+                    <span class="bank-icon">🟠</span><span class="bank-name">Inter</span>
+                </a>
+                <a href="caixa://" class="bank-item">
+                    <span class="bank-icon">🔵</span><span class="bank-name">Caixa</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <div class="footer">POWERED BY PALHARES</div>
@@ -179,12 +227,14 @@
     function copyPix() {
         navigator.clipboard.writeText(pixCode).then(() => {
             const b = document.getElementById('copyBtn');
-            b.innerText = "✓ COPIADO!";
+            b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
-            setTimeout(() => {
-                b.innerText = "Copiar Código Pix";
-                b.classList.remove('btn-success');
-            }, 2500);
+            
+            // Mostra o seletor de bancos
+            document.getElementById('bank-selector').style.display = 'block';
+            
+            // Rola suavemente para os bancos se necessário
+            window.scrollBy({ top: 150, behavior: 'smooth' });
         });
     }
 </script>
