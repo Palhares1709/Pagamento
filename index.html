@@ -145,11 +145,10 @@
             color: white;
         }
 
-        /* Cores Oficiais dos Bancos */
         .bg-nubank { background: #820ad1; }
         .bg-itau { background: #ff7000; }
         .bg-bradesco { background: #cc092f; }
-        .bg-bb { background: #fcf800; color: #0038a8 !important; } /* Banco do Brasil */
+        .bg-bb { background: #fcf800; color: #0038a8 !important; }
         .bg-santander { background: #ec0000; }
         .bg-inter { background: #ff7a00; }
 
@@ -158,16 +157,19 @@
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
         
-        input {
-            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; 
-            background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; 
-            font-size: 16px; text-align: center;
+        /* Estilo da Tela de Expiração */
+        #expired-msg {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="main-content">
     <svg class="pix-logo-svg" viewBox="0 0 132 46" xmlns="http://www.w3.org/2000/svg">
         <path d="M53.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#FFF"/>
         <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
@@ -175,14 +177,6 @@
     </svg>
     
     <div class="pix-badge">Pagamento Instantâneo</div>
-
-    <div id="setup" class="hidden" style="width: 100%;">
-        <div class="card-main">
-            <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link</h2>
-            <input type="text" id="nameInput" placeholder="Nome do Cliente">
-            <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
-        </div>
-    </div>
 
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
@@ -200,35 +194,43 @@
         <div id="bank-selector">
             <div class="bank-title">Código copiado! Escolha seu banco:</div>
             <div class="bank-grid">
-                <a href="nubank://" class="bank-item">
+                <a href="https://nubank.com.br/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-nubank">Nu</div>
                     <span class="bank-name">Nubank</span>
                 </a>
-                <a href="itau://" class="bank-item">
+                <a href="https://www.itau.com.br/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-itau">It</div>
                     <span class="bank-name">Itaú</span>
                 </a>
-                <a href="bradesco://" class="bank-item">
+                <a href="https://banco.bradesco/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-bradesco">B</div>
                     <span class="bank-name">Bradesco</span>
                 </a>
-                <a href="bankofbrazil://" class="bank-item">
+                <a href="https://www.bb.com.br/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-bb">BB</div>
                     <span class="bank-name">B. Brasil</span>
                 </a>
-                <a href="santander://" class="bank-item">
+                <a href="https://www.santander.com.br/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-santander">S</div>
                     <span class="bank-name">Santander</span>
                 </a>
-                <a href="inter://" class="bank-item">
+                <a href="https://www.bancointer.com.br/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-inter">In</div>
                     <span class="bank-name">Inter</span>
                 </a>
             </div>
         </div>
     </div>
+    
+    <!-- Mensagem de Expiração -->
+    <div id="expired-msg">
+        <div style="font-size: 50px;">✅</div>
+        <h2 style="color: #64D2C1;">Cobrança Finalizada</h2>
+        <p style="color: #888; font-size: 14px;">Este link de pagamento expirou por segurança.</p>
+        <div class="footer" style="margin-top: 20px;">LOCAPP - SISTEMAS INTELIGENTES</div>
+    </div>
 
-    <div class="footer">POWERED BY PALHARES</div>
+    <div class="footer" id="main-footer">POWERED BY PALHARES</div>
 </div>
 
 <script>
@@ -240,17 +242,6 @@
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
-    } else {
-        document.getElementById('setup').classList.remove('hidden');
-    }
-
-    function createLink() {
-        const n = document.getElementById('nameInput').value;
-        if(!n) return alert("Digite o nome");
-        const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
-        navigator.clipboard.writeText(link);
-        alert("Link gerado e copiado!");
-        window.location.href = link;
     }
 
     function copyPix() {
@@ -260,7 +251,24 @@
             b.classList.add('btn-success');
             document.getElementById('bank-selector').style.display = 'block';
             window.scrollBy({ top: 180, behavior: 'smooth' });
+
+            // INÍCIO DA OPÇÃO C: Auto-apagar após 5 minutos (300.000 ms)
+            setTimeout(() => {
+                document.getElementById('payment').style.display = 'none';
+                document.getElementById('expired-msg').style.display = 'flex';
+                document.getElementById('main-footer').style.display = 'none';
+                
+                // Opcional: Impedir que o usuário volte ao atualizar a página
+                localStorage.setItem('cobranca_finalizada_' + user, 'true');
+            }, 300000); 
         });
+    }
+
+    // Verifica se este usuário já finalizou a cobrança anteriormente
+    if (localStorage.getItem('cobranca_finalizada_' + user)) {
+        document.getElementById('payment').style.display = 'none';
+        document.getElementById('expired-msg').style.display = 'flex';
+        document.getElementById('main-footer').style.display = 'none';
     }
 </script>
 
