@@ -59,9 +59,7 @@
             margin-bottom: 20px;
         }
 
-        /* Estilo do Cronômetro */
         #timer-display {
-            display: none;
             background: rgba(100, 210, 193, 0.1);
             color: #64D2C1;
             padding: 5px 15px;
@@ -70,6 +68,7 @@
             font-weight: 800;
             margin-bottom: 15px;
             border: 1px solid rgba(100, 210, 193, 0.3);
+            display: inline-block;
         }
 
         .avatar-money {
@@ -134,17 +133,12 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 15px 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            text-decoration: none;
         }
 
-        .bank-item:active { transform: scale(0.95); background: rgba(100, 210, 193, 0.1); }
-        
         .bank-logo-circle {
             width: 32px;
             height: 32px;
@@ -167,6 +161,13 @@
 
         .bank-name { font-size: 8px; color: #aaa; font-weight: 700; text-transform: uppercase; }
 
+        #expired-msg {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
         
@@ -174,14 +175,6 @@
             width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; 
             background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; 
             font-size: 16px; text-align: center;
-        }
-
-        #expired-msg {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 50px 20px;
         }
     </style>
 </head>
@@ -196,7 +189,6 @@
     
     <div class="pix-badge">Pagamento Instantâneo</div>
 
-    <!-- Gerador de Link -->
     <div id="setup" class="hidden" style="width: 100%;">
         <div class="card-main">
             <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link</h2>
@@ -205,11 +197,10 @@
         </div>
     </div>
 
-    <!-- Tela de Pagamento -->
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
         
-        <div id="timer-display">Link expira em: <span id="countdown">05:00</span></div>
+        <div id="timer-display">Expira em: <span id="countdown">05:00</span></div>
         
         <div class="avatar-money">🤑</div>
         <div class="card-main">
@@ -223,7 +214,7 @@
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
 
         <div id="bank-selector">
-            <div class="bank-title">Código copiado! Escolha seu banco:</div>
+            <div class="bank-title">Escolha seu banco:</div>
             <div class="bank-grid">
                 <a href="https://nubank.com.br/" target="_blank" class="bank-item">
                     <div class="bank-logo-circle bg-nubank">Nu</div><span class="bank-name">Nubank</span>
@@ -249,7 +240,7 @@
 
     <div id="expired-msg">
         <div style="font-size: 50px;">✅</div>
-        <h2 style="color: #64D2C1;">Link expirado</h2>
+        <h2 style="color: #64D2C1;">Cobrança Finalizada</h2>
         <p style="color: #888; font-size: 14px;">Este link expirou por segurança.</p>
     </div>
 
@@ -260,38 +251,51 @@
     const pixCode = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
     const params = new URLSearchParams(window.location.search);
     const user = params.get('nome');
+    const storageKey = 'expiracao_' + user;
 
     if (user) {
-        if (localStorage.getItem('finalizado_' + user)) {
-            document.getElementById('payment').style.display = 'none';
-            document.getElementById('expired-msg').style.display = 'flex';
-        } else {
-            document.getElementById('payment').classList.remove('hidden');
-            document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
-            document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
-        }
+        document.getElementById('payment').classList.remove('hidden');
+        document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
+        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
+        
+        // Iniciar cronômetro assim que a página abre
+        initExpiration();
     } else {
         document.getElementById('setup').classList.remove('hidden');
     }
 
-    function startTimer(duration, display) {
-        let timer = duration, minutes, seconds;
-        let interval = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
+    function initExpiration() {
+        let deadline = localStorage.getItem(storageKey);
+        
+        // Se não existir um horário de expiração salvo, criar um agora (agora + 5 min)
+        if (!deadline) {
+            deadline = new Date().getTime() + (5 * 60 * 1000);
+            localStorage.setItem(deadlineKey(), deadline);
+        }
 
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = deadline - now;
 
-            display.textContent = minutes + ":" + seconds;
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            if (--timer < 0) {
-                clearInterval(interval);
+            document.getElementById("countdown").innerHTML = 
+                (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+                (seconds < 10 ? "0" + seconds : seconds);
+
+            if (distance < 0) {
+                clearInterval(x);
                 document.getElementById('payment').style.display = 'none';
                 document.getElementById('expired-msg').style.display = 'flex';
-                localStorage.setItem('finalizado_' + user, 'true');
+                document.getElementById('main-footer').style.display = 'none';
             }
         }, 1000);
+    }
+
+    // Função auxiliar para criar chave única por link de cliente
+    function deadlineKey() {
+        return 'deadline_' + btoa(user); 
     }
 
     function createLink() {
@@ -309,13 +313,8 @@
             const b = document.getElementById('copyBtn');
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
-            
-            document.getElementById('timer-display').style.display = 'inline-block';
             document.getElementById('bank-selector').style.display = 'block';
             window.scrollBy({ top: 180, behavior: 'smooth' });
-
-            // Inicia cronômetro de 5 minutos (300 segundos)
-            startTimer(300, document.querySelector('#countdown'));
         });
     }
 </script>
