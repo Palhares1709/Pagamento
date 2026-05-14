@@ -5,155 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Locapp</title>
     <style>
+        /* (Mantive seus estilos originais para o design não mudar) */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes moneyPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        html, body { 
-            overflow-x: hidden; 
-            overflow-y: auto; 
-            width: 100%; 
-            min-height: 100%; 
-            margin: 0; 
-            background: #121212; 
-        }
-
-        body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            color: white; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; 
-            padding: 40px 15px; 
-        }
-
-        .container { 
-            text-align: center; 
-            width: 100%; 
-            max-width: 350px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            animation: slideUp 0.6s ease-out;
-        }
-
-        .pix-logo-svg { 
-            width: 75px; 
-            height: auto; 
-            margin-bottom: 12px; 
-            display: block;
-        }
-
-        .pix-badge {
-            background: rgba(255, 255, 255, 0.07);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 9px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 20px;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-box {
-            background: #1e1e1e;
-            border: 1px solid #64D2C1;
-            padding: 30px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 300px;
-            text-align: center;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        #timer-display {
-            display: none; 
-            background: rgba(100, 210, 193, 0.1);
-            color: #64D2C1;
-            padding: 5px 15px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 15px;
-            border: 1px solid rgba(100, 210, 193, 0.3);
-        }
-
-        .avatar-money {
-            font-size: 48px;
-            margin-bottom: -10px;
-            display: inline-block;
-            animation: moneyPulse 1.5s infinite ease-in-out;
-            z-index: 10;
-        }
-
-        .card-main {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .qr-wrapper {
-            background: white;
-            padding: 10px;
-            border-radius: 18px;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes moneyPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        html, body { overflow-x: hidden; overflow-y: auto; width: 100%; min-height: 100%; margin: 0; background: #121212; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: white; display: flex; justify-content: center; align-items: flex-start; padding: 40px 15px; }
+        .container { text-align: center; width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center; animation: slideUp 0.6s ease-out; }
+        .pix-logo-svg { width: 75px; height: auto; margin-bottom: 12px; display: block; }
+        .pix-badge { background: rgba(255, 255, 255, 0.07); padding: 4px 12px; border-radius: 20px; font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: #1e1e1e; border: 1px solid #64D2C1; padding: 30px; border-radius: 24px; width: 90%; max-width: 300px; text-align: center; animation: slideUp 0.3s ease-out; }
+        #timer-display { display: none; background: rgba(100, 210, 193, 0.1); color: #64D2C1; padding: 5px 15px; border-radius: 12px; font-size: 14px; font-weight: 800; margin-bottom: 15px; border: 1px solid rgba(100, 210, 193, 0.3); }
+        .avatar-money { font-size: 48px; margin-bottom: -10px; display: inline-block; animation: moneyPulse 1.5s infinite ease-in-out; z-index: 10; }
+        .card-main { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; }
+        .qr-wrapper { background: white; padding: 10px; border-radius: 18px; display: inline-block; margin-bottom: 15px; }
         .qr-code { width: 160px; height: 160px; display: block; }
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
         .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin: 0; }
-
-        .btn-action { 
-            background: #64D2C1; color: #121212; border: none; padding: 18px; 
-            width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; 
-            cursor: pointer; transition: 0.2s;
-            box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15);
-            margin-top: 20px;
-        }
-        
+        .btn-action { background: #64D2C1; color: #121212; border: none; padding: 18px; width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15); margin-top: 20px; }
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
-
-        #expired-msg {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            padding: 50px 20px;
-        }
-
+        #expired-msg { display: none; flex-direction: column; align-items: center; padding: 50px 20px; }
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
-        
-        input {
-            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; 
-            background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; 
-            font-size: 16px; text-align: center;
-        }
+        input { width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; font-size: 16px; text-align: center; }
     </style>
 </head>
 <body>
@@ -188,8 +64,8 @@
     </div>
 
     <div id="payment" class="hidden" style="width: 100%;">
-        <div id="hi" style="font-size: 18px; margin-bottom: 5px;">Olá!</div>
-        <div id="display-value" style="font-size: 26px; font-weight: 900; color: #64D2C1; margin-bottom: 12px;">R$ 0,00</div>
+        <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
+        <!-- Note que o valor em destaque (R$) foi removido daqui conforme solicitado -->
         
         <div id="timer-display">link expira em: <span id="countdown">05:00</span></div>
         <div class="avatar-money">🤑</div>
@@ -219,7 +95,7 @@
 
     const params = new URLSearchParams(window.location.search);
     const user = params.get('nome');
-    const valorUrl = params.get('valor');
+    const valorCodificado = params.get('v'); // Pegamos 'v' em vez de 'valor'
     
     let finalPixCode = ""; 
 
@@ -227,9 +103,15 @@
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         
-        const valorNumerico = valorUrl ? parseFloat(valorUrl.replace(',', '.')) : 0;
-        document.getElementById('display-value').innerText = valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        // Descodificamos o valor da URL
+        let valorNumerico = 0;
+        if (valorCodificado) {
+            try {
+                valorNumerico = parseFloat(atob(valorCodificado));
+            } catch(e) { valorNumerico = 0; }
+        }
 
+        // Gera o PIX (o valor vai estar embutido no código, o banco vai ler)
         finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
         document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
         
@@ -271,9 +153,12 @@
         const v = document.getElementById('valueInput').value;
         if(!n || !v) return showModal("Atenção", "Preencha o nome e o valor.", "⚠️");
         
-        const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n) + "&valor=" + encodeURIComponent(v);
+        // Codificamos o valor em Base64 para não aparecer "limpo" na URL
+        const valorSeguro = btoa(parseFloat(v).toFixed(2));
+        const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n) + "&v=" + valorSeguro;
+        
         navigator.clipboard.writeText(link).then(() => {
-            showModal("Link Gerado!", "Link copiado para " + n + ". Agora é só enviar!", "✅", link);
+            showModal("Link Gerado!", "Link copiado para " + n + ".", "✅", link);
         });
     }
 
@@ -319,7 +204,6 @@
                 clearInterval(x);
                 document.getElementById('payment').style.display = 'none';
                 document.getElementById('expired-msg').style.display = 'flex';
-                document.getElementById('main-footer').style.display = 'none';
             }
         }, 1000);
     }
