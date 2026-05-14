@@ -12,28 +12,21 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Animação: Dinheiro "esfolheando" (subindo e sumindo em sequência) */
-        @keyframes moneyFlip {
-            0% { transform: translateY(10px) opacity(0); }
-            50% { transform: translateY(0) opacity(1); }
-            100% { transform: translateY(-20px) opacity(0); }
+        @keyframes moneyPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        html, body { 
-            overflow-x: hidden; 
-            width: 100%; 
-            height: 100%; 
-            margin: 0; 
-            background: #121212; 
-        }
+        html, body { overflow-x: hidden; width: 100%; height: 100%; margin: 0; background: #121212; }
 
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Inter', -apple-system, sans-serif; 
             color: white; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            padding: 15px; 
+            padding: 15px;
         }
 
         .container { 
@@ -46,41 +39,33 @@
             animation: slideUp 0.6s ease-out;
         }
 
-        /* LOGO PIX EM SVG PURO - Integrado ao código para não sumir */
+        /* LOGO PIX - Ajustado para não cortar conforme image_9fd264.png */
         .pix-logo-svg {
-            width: 80px;
+            width: 85px;
             height: auto;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            display: block;
         }
 
         .pix-badge {
             background: rgba(255, 255, 255, 0.07);
-            padding: 6px 16px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 10px;
-            color: #999;
+            font-size: 9px; /* Fonte reduzida conforme sugerido */
+            color: #888;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
         }
 
-        /* Bonequinho esfolheando dinheiro */
-        .money-box {
-            height: 60px;
-            position: relative;
-            margin-bottom: -5px;
-            z-index: 5;
+        /* Bonequinho com dinheiro na boca */
+        .avatar-money {
+            font-size: 48px;
+            margin-bottom: -10px;
+            display: inline-block;
+            animation: moneyPulse 1.5s infinite ease-in-out;
+            z-index: 10;
         }
-
-        .bill {
-            font-size: 40px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: moneyFlip 1s infinite;
-        }
-        .bill:nth-child(2) { animation-delay: 0.3s; }
-        .bill:nth-child(3) { animation-delay: 0.6s; }
 
         .card-main {
             width: 100%;
@@ -117,14 +102,7 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        .footer { 
-            margin-top: 30px; 
-            font-size: 10px; 
-            color: #444; 
-            letter-spacing: 2px; 
-            font-weight: 900; 
-        }
-
+        .footer { margin-top: 30px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
         
         input {
@@ -137,33 +115,28 @@
 <body>
 
 <div class="container">
-    <!-- SVG do Pix embutido (Inquebrável) -->
-    <svg class="pix-logo-svg" viewBox="0 0 512 178" xmlns="http://www.w3.org/2000/svg">
-        <path d="M124.7 93c0 24.6-17.8 44.8-45.4 44.8H50.9V48.1h28.4c27.6 0 45.4 20.2 45.4 44.9zm-18.8 0c0-14.4-9.5-26.7-26.6-26.7H71v53.4h8.3c17.1 0 26.6-12.3 26.6-26.7zM157.5 137.8V48.1h18.7v89.7h-18.7zM232.4 93l34.1 44.8h-22.8l-22.2-30.7-22.2 30.7h-22.8l34.1-44.8-32.8-42.7h22.8l20.9 28.5 20.9-28.5h22.8L232.4 93z" fill="#FFF"/>
-        <path d="M70.8 126.1l30.4-30.4c1.3-1.3 1.3-3.4 0-4.7l-30.4-30.4c-1.3-1.3-3.4-1.3-4.7 0L35.7 91c-1.3 1.3-1.3 3.4 0 4.7l30.4 30.4c1.3 1.3 3.4 1.3 4.7 0z" fill="#64D2C1"/>
+    <!-- SVG do Pix com ViewBox corrigida para evitar cortes -->
+    <svg class="pix-logo-svg" viewBox="0 0 132 46" xmlns="http://www.w3.org/2000/svg">
+        <path d="M53.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#FFF"/>
+        <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
+        <path d="M25.753 23.9a10.342 10.342 0 01-3.03 7.311l-7.001 7.001a1.29 1.29 0 01-1.824 0l-7.002-7.001a10.344 10.344 0 010-14.622l7.002-7.002a1.29 1.29 0 011.824 0l7.001 7.002c1.954 1.954 3.03 4.552 3.03 7.31z" stroke="#64D2C1" stroke-width="2.5"/>
     </svg>
     
     <div class="pix-badge">Pagamento Instantâneo</div>
 
-    <!-- Gerador -->
     <div id="setup" class="hidden" style="width: 100%;">
         <div class="card-main">
             <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
-            <button class="btn-action" onclick="createLink()">Copiar Link Personalizado</button>
+            <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
         </div>
     </div>
 
-    <!-- Pagamento -->
     <div id="payment" class="hidden" style="width: 100%;">
-        <div id="hi" style="font-size: 18px; margin-bottom: 10px;">Olá!</div>
+        <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
         
-        <!-- Dinheiro "Esfolheando" -->
-        <div class="money-box">
-            <div class="bill">💸</div>
-            <div class="bill">💰</div>
-            <div class="bill">💸</div>
-        </div>
+        <!-- Bonequinho com dinheiro na boca -->
+        <div class="avatar-money">🤑</div>
         
         <div class="card-main">
             <div class="qr-wrapper">
@@ -173,7 +146,7 @@
             <div class="recebedor-nome">PALHARES</div>
         </div>
         
-        <p style="color: #666; font-size: 13px; margin: 15px 0 0;">Toque abaixo para copiar:</p>
+        <p style="color: #666; font-size: 12px; margin: 15px 0 0;">Toque abaixo para copiar:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
@@ -198,7 +171,7 @@
         if(!n) return alert("Digite o nome");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link copiado para " + n);
+        alert("Link gerado e copiado!");
         window.location.href = link;
     }
 
