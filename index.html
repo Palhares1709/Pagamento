@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
+        /* Reset e Travamento de Scroll Lateral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         @keyframes slideUp {
@@ -12,54 +13,73 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Animação do Bonequinho coçando a mão */
         @keyframes itchyHand {
             0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg) translateX(-2px); }
-            75% { transform: rotate(5deg) translateX(2px); }
+            25% { transform: rotate(-8deg) translateX(-3px); }
+            75% { transform: rotate(8deg) translateX(3px); }
         }
 
-        html, body { overflow-x: hidden; width: 100%; height: 100%; margin: 0; }
+        html, body { 
+            overflow-x: hidden; 
+            width: 100%; 
+            height: 100%; 
+            margin: 0; 
+            background: #121212;
+        }
 
         body { 
             font-family: 'Inter', -apple-system, sans-serif; 
-            background: #121212;
             color: white; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            padding: 20px;
+            padding: 15px;
         }
 
         .container { 
             text-align: center; 
             width: 100%; 
-            max-width: 360px;
+            max-width: 350px; /* Tamanho ideal para não sobrar no celular */
             display: flex;
             flex-direction: column;
             align-items: center; 
             animation: slideUp 0.6s ease-out;
         }
 
-        .pix-header-logo { width: 80px; margin-bottom: 12px; filter: brightness(1.2); }
-
-        .pix-badge-wrapper { width: 100%; display: flex; justify-content: center; margin-bottom: 20px; }
-
-        .pix-badge {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 11px;
-            color: #888;
+        /* Logo do Pix com tamanho responsivo */
+        .pix-header-logo { 
+            width: 70px; 
+            height: auto;
+            margin-bottom: 10px; 
+            filter: brightness(1.2); 
+            display: block;
         }
 
-        /* O Bonequinho Ousado */
+        .pix-badge-wrapper { 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            margin-bottom: 15px; 
+        }
+
+        .pix-badge {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Bonequinho Ousado */
         .avatar-container {
-            font-size: 50px;
-            margin-bottom: -10px;
+            font-size: 45px;
+            margin-bottom: -8px;
             display: inline-block;
-            animation: itchyHand 0.5s infinite;
-            filter: drop-shadow(0 0 10px rgba(100, 210, 193, 0.3));
+            animation: itchyHand 0.4s infinite;
+            filter: drop-shadow(0 0 8px rgba(100, 210, 193, 0.4));
+            z-index: 2;
         }
 
         .card-main {
@@ -67,52 +87,52 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 28px;
-            padding: 30px 20px;
+            padding: 25px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
-        h2 { font-size: 22px; margin: 0 0 20px; font-weight: 700; }
+        h2 { font-size: 20px; margin: 0 0 15px; font-weight: 700; }
 
         input {
-            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; 
-            background: #1a1a1a; color: white; margin-bottom: 20px; outline: none; 
+            width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #333; 
+            background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; 
             font-size: 16px; text-align: center;
         }
 
         .qr-wrapper {
             background: white;
-            padding: 12px;
-            border-radius: 20px;
+            padding: 10px;
+            border-radius: 18px;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .qr-code { width: 160px; height: 160px; display: block; }
+        .qr-code { width: 150px; height: 150px; display: block; }
         
-        .recebedor-label { font-size: 11px; color: #666; letter-spacing: 2px; margin-bottom: 4px; }
-        .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin-bottom: 0; }
+        .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
+        .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; margin: 0; }
 
         .btn-action { 
-            background: #64D2C1; color: #121212; border: none; padding: 18px; 
-            width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; 
+            background: #64D2C1; color: #121212; border: none; padding: 17px; 
+            width: 100%; font-size: 15px; font-weight: 800; border-radius: 14px; 
             cursor: pointer; transition: 0.2s;
-            box-shadow: 0 8px 16px rgba(100, 210, 193, 0.15);
+            box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15);
         }
         
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        .footer { margin-top: 30px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
+        .footer { margin-top: 25px; font-size: 9px; color: #444; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-header-logo">
+    <!-- Nova URL da logo para evitar erros de carregamento no mobile -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_Pix.png" alt="Logo Pix" class="pix-header-logo">
     
     <div class="pix-badge-wrapper">
         <div class="pix-badge">Pagamento Instantâneo</div>
@@ -123,15 +143,14 @@
         <div class="card-main">
             <h2>Gerar Link</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
-            <button class="btn-action" onclick="createLink()">Copiar e Visualizar Link</button>
+            <button class="btn-action" onclick="createLink()">Copiar Link</button>
         </div>
     </div>
 
     <!-- Interface Pagamento -->
     <div id="payment" class="hidden" style="width: 100%;">
-        <div class="welcome-msg" id="hi" style="font-size: 18px; margin-bottom: 15px;">Olá!</div>
+        <div class="welcome-msg" id="hi" style="font-size: 17px; margin-bottom: 12px;">Olá!</div>
         
-        <!-- O Bonequinho Ousado aparece aqui -->
         <div class="avatar-container">🤑</div>
         
         <div class="card-main">
@@ -141,7 +160,7 @@
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
         </div>
-        <p style="color: #666; font-size: 13px; margin: 20px 0 15px;">Clique abaixo para copiar o código:</p>
+        <p style="color: #666; font-size: 12px; margin: 15px 0 10px;">Clique abaixo para copiar o código:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
@@ -166,6 +185,7 @@
         if(!n) return alert("Digite o nome");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
+        alert("Link copiado para " + n);
         window.location.href = link;
     }
 
