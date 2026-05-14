@@ -60,7 +60,7 @@
         }
 
         #timer-display {
-            display: none; /* Escondido por padrão */
+            display: none; 
             background: rgba(100, 210, 193, 0.1);
             color: #64D2C1;
             padding: 5px 15px;
@@ -113,54 +113,6 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        #bank-selector {
-            width: 100%;
-            margin-top: 25px;
-            display: none;
-            animation: slideUp 0.4s ease-out;
-        }
-
-        .bank-title { font-size: 11px; color: #666; margin-bottom: 15px; font-weight: 600; text-transform: uppercase; }
-
-        .bank-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .bank-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 15px 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .bank-logo-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 14px;
-            color: white;
-        }
-
-        .bg-nubank { background: #820ad1; }
-        .bg-itau { background: #ff7000; }
-        .bg-bradesco { background: #cc092f; }
-        .bg-bb { background: #fcf800; color: #0038a8 !important; }
-        .bg-santander { background: #ec0000; }
-        .bg-inter { background: #ff7a00; }
-
-        .bank-name { font-size: 8px; color: #aaa; font-weight: 700; text-transform: uppercase; }
-
         #expired-msg {
             display: none;
             flex-direction: column;
@@ -212,30 +164,6 @@
         </div>
         
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
-
-        <div id="bank-selector">
-            <div class="bank-title">Escolha seu banco:</div>
-            <div class="bank-grid">
-                <a href="https://nubank.com.br/" target="_blank" class="bank-item">
-                    <div class="bank-logo-circle bg-nubank">Nu</div><span class="bank-name">Nubank</span>
-                </a>
-                <a href="https://www.itau.com.br/" target="_blank" class="bank-item">
-                    <div class="bank-logo-circle bg-itau">It</div><span class="bank-name">Itaú</span>
-                </a>
-                <a href="https://banco.bradesco/" target="_blank" class="bank-item">
-                    <div class="bank-logo-circle bg-bradesco">B</div><span class="bank-name">Bradesco</span>
-                </a>
-                <a href="https://www.bb.com.br/" target="_blank" class="bank-item">
-                    <div class="bank-logo-circle bg-bb">BB</div><span class="bank-name">B. Brasil</span>
-                </a>
-                <a href="https://www.santander.com.br/" target="_blank" class="bank-item">
-                    <div class="bank-logo-circle bg-santander">S</div><span class="bank-name">Santander</span>
-                </a>
-                <a href="https://www.bancointer.com.br/" target="_blank" class="bank-item">
-                    <div class="bank-logo-circle bg-inter">In</div><span class="bank-name">Inter</span>
-                </a>
-            </div>
-        </div>
     </div>
 
     <div id="expired-msg">
@@ -248,27 +176,30 @@
 </div>
 
 <script>
-    const pixCode = "00020126500014br.gov.bcb.pix0121fcpalharess@gmail.com0203PIX5204000053039865802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525KEOVWYX7Yw0nzFnL086F2Ty5n63044335";
+    const pixCode = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
     const params = new URLSearchParams(window.location.search);
     const user = params.get('nome');
-    const storageKey = 'deadline_' + btoa(user); 
+    
+    // Identificador único por dia para evitar conflitos de cache
+    const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
+    const storageKey = 'locapp_deadline_' + btoa(user) + '_' + dateKey; 
 
     if (user) {
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
         
-        // Verifica se a contagem já tinha começado anteriormente
-        if (localStorage.getItem(storageKey)) {
-            startExpirationLogic(localStorage.getItem(storageKey));
+        const savedDeadline = localStorage.getItem(storageKey);
+        if (savedDeadline) {
+            startExpirationLogic(parseInt(savedDeadline));
         }
     } else {
         document.getElementById('setup').classList.remove('hidden');
     }
 
     function startExpirationLogic(deadline) {
-        document.getElementById('timer-display').style.display = 'inline-block';
-        document.getElementById('bank-selector').style.display = 'block';
+        const timerDisplay = document.getElementById('timer-display');
+        timerDisplay.style.display = 'inline-block';
 
         const x = setInterval(function() {
             const now = new Date().getTime();
@@ -280,6 +211,11 @@
             document.getElementById("countdown").innerHTML = 
                 (minutes < 10 ? "0" + minutes : minutes) + ":" + 
                 (seconds < 10 ? "0" + seconds : seconds);
+
+            if (distance < 60000) {
+                timerDisplay.style.color = "#ff4d4d";
+                timerDisplay.style.borderColor = "rgba(255, 77, 77, 0.3)";
+            }
 
             if (distance < 0) {
                 clearInterval(x);
@@ -295,7 +231,7 @@
         if(!n) return alert("Digite o nome do cliente.");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link).then(() => {
-            alert("Link copiado para " + n + "! Envie para o cliente.");
+            alert("Link gerado e copiado!");
             window.location.href = link;
         });
     }
@@ -306,14 +242,11 @@
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
             
-            // Define o tempo de expiração apenas se ainda não existir um salvo
             if (!localStorage.getItem(storageKey)) {
                 const deadline = new Date().getTime() + (5 * 60 * 1000);
                 localStorage.setItem(storageKey, deadline);
                 startExpirationLogic(deadline);
             }
-            
-            window.scrollBy({ top: 180, behavior: 'smooth' });
         });
     }
 </script>
