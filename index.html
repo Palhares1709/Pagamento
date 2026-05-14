@@ -45,11 +45,12 @@
             animation: slideUp 0.6s ease-out;
         }
 
-        /* Logo Pix em SVG (Indestrutível) */
-        .pix-logo-svg {
-            width: 75px;
+        /* Logo Pix em Base64 - Inquebrável */
+        .pix-header-logo { 
+            width: 85px; 
             height: auto;
-            margin-bottom: 15px;
+            margin-bottom: 15px; 
+            filter: brightness(1.1);
         }
 
         .pix-badge-wrapper { 
@@ -127,11 +128,8 @@
 <body>
 
 <div class="container">
-    <!-- SVG do Pix embutido para nunca falhar -->
-    <svg class="pix-logo-svg" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <path d="M312.4 186.2c-5.7-5.8-15.1-5.8-20.8 0l-25.2 25.2-25.2-25.2c-5.7-5.8-15.1-5.8-20.8 0-5.7 5.8-5.7 15.2 0 20.9l25.2 25.2-25.2 25.2c-5.7 5.8-5.7 15.2 0 20.9 5.7 5.8 15.1 5.8 20.8 0l25.2-25.2 25.2 25.2c5.7 5.8 15.1 5.8 20.8 0 5.7-5.8 5.7-15.2 0-20.9l-25.2-25.2 25.2-25.2c5.8-5.8 5.8-15.2 0-20.9z" fill="#64D2C1"/>
-        <path d="M441.2 110.1C390.6 59.4 323.3 31.4 251.2 31.4c-72.1 0-139.4 28-190 78.7-50.6 50.6-78.5 117.9-78.5 190 0 72.1 27.9 139.4 78.5 190 50.6 50.6 117.9 78.5 190 78.5 72.1 0 139.4-27.9 190-78.5 50.6-50.6 78.5-117.9 78.5-190 0-72.1-27.9-139.4-78.5-190zm-180.2 334c-100.9 0-183-82.1-183-183s82.1-183 183-183 183 82.1 183 183-82.1 183-183 183z" fill="#64D2C1"/>
-    </svg>
+    <!-- Imagem em Base64 para garantir o carregamento em qualquer dispositivo -->
+    <img class="pix-header-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABMCAMAAAB986v8AAAASFBMVEUAAABk0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v9k0v8q9I4XAAAAF3RSTlMAER8vT2RofX6SnaCis7vEyszS2N3p7O/8/T9zAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB+YFExAnIitS/YkAAAL6SURBVGje7ZjbbuMgEIYpS9pUbVpXbd9/0S0X7W6Sps0pL8As/v8vW8Y2YDAIOMfNf4pAnMcXf+AfAwCAv+I7oR8+gP83vGZf8Vp9xev0X9K1XpEAsH5fQW680m68st90I9dYIICf9RUmxmvvxmv9TZf8rO8IsL/BvRuvvRuv9TfdrP0N/hAAYX6DPzdeBzdew990Kz9v8Id7XvD7xqv3er7e6/l6r+frvZ6v93q+Xh3M66v3pWf+K8Y9R+456p6j7jn6nqP9X49uOfatx+v7f0vEa60X8VrrRbzWep3m9X2e19d5fX/v9f2+1/f6Xt/re32v7/V93O/8SInI/Ufdf9QDRz1w9APH7099v7r5mPrO8fU9f60uPqa+N7z7vP8P6u7z4X/Ud9+n88969/l0+6ZfLz/m6/fNf7X+uPmvX78f/7vX9/vxfzT9sfY/2v5Y98f6v9b/fvx/vL7Xf0v0H5N8TPonS9+O/9FrvU4v9Dq98FrvV7vH1F9f89vV7DHzl9vMv20yX675Y738mH65vX6tt7fXm8xr7eXm8pp6id6pW+9UrVdqNpqN6E6pPqHe9OnE09XnU6+un8+9unE+9frC+dzrq8vnc6+vnq9vP68fP69/v67vP69/v24fr3++bh+v/97699fvG/xL/v0Gf+Vf/8P/+id/5v/9mX/65//zn/+dfv/7v6vfu/5V/Z36Xf6T/jR/mH9v/1p/pT/PH6v+Un+s+kO9f70Oun699rt+vY65fr3OOn69jjv9un/6df/06/6p1+lTr9Pn69Pn69Pnx9Pnx9Pn69Pn6+vPr68vH68vH68vH68vH+8vH+8vH+8vH+8vH89vHs9vHs9vHs/vHs/vHs/vHs/vHs/fHs/fHs/fHs/fHs/fH8/fH8/fH8/fH8/fH8/fH8/fH8/fH8/fH8/fH8/vH89vHs9vHs9vHs9vHs9vHs/vHs/vHs/vHs/vH9//vj8AgB/mG/M/yXqH3oVDAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTE5VDE2OjM5OjM0KzAwOjAw967X3AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0xOVQxNjozOTozNCswMDowMPBvN5YAAAAASUVORK5CYII=" alt="Logo Pix">
     
     <div class="pix-badge-wrapper">
         <div class="pix-badge">Pagamento Instantâneo</div>
@@ -184,7 +182,7 @@
         if(!n) return alert("Digite o nome");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link copiado para " + n);
+        alert("Link gerado e copiado para " + n);
         window.location.href = link;
     }
 
