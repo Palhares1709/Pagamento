@@ -5,41 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Locapp</title>
     <style>
-        * { box-sizing: border-box; }
+        /* Impede rolagem lateral e ajusta box-model */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(100, 210, 193, 0.4); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(100, 210, 193, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(100, 210, 193, 0); }
+        html, body {
+            overflow-x: hidden; /* Garante que nada escape pelas laterais */
+            width: 100%;
         }
 
         body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: radial-gradient(circle at top right, #1e1e1e, #121212);
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background: #121212;
             color: white; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 20px;
+            padding: 15px; /* Espaço de segurança para não colar nas bordas */
         }
 
         .container { 
             text-align: center; 
             width: 100%; 
-            max-width: 400px; 
-            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            max-width: 360px; /* Largura ideal para a maioria dos celulares */
+            animation: slideUp 0.6s ease-out;
         }
 
-        /* Espaço para o SEU Logo */
         .brand-logo {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #64D2C1;
             margin-bottom: 5px;
@@ -48,90 +47,91 @@
 
         .pix-badge {
             background: rgba(255, 255, 255, 0.05);
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 30px;
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 20px;
         }
 
-        .welcome-msg { font-size: 20px; margin-bottom: 10px; font-weight: 300; }
+        .welcome-msg { font-size: 18px; margin-bottom: 15px; font-weight: 300; }
         .welcome-msg b { color: #64D2C1; font-weight: 700; }
         
-        /* Efeito de Vidro no Card */
         .card { 
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 32px; 
-            padding: 40px 25px; 
-            margin-bottom: 25px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-radius: 28px; 
+            padding: 30px 20px; 
+            margin-bottom: 20px;
+            width: 100%;
         }
 
         .qr-wrapper {
             background: white;
-            padding: 15px;
-            border-radius: 24px;
+            padding: 12px;
+            border-radius: 20px;
             display: inline-block;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
+            margin-bottom: 15px;
         }
 
-        .qr-code { width: 180px; height: 180px; display: block; }
+        .qr-code { width: 160px; height: 160px; display: block; }
         
-        .recebedor-label { 
-            font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;
-        }
-
-        .recebedor-nome { 
-            font-size: 18px; font-weight: 700; color: #64D2C1; margin-bottom: 0;
-        }
+        .recebedor-label { font-size: 11px; color: #666; letter-spacing: 2px; margin-bottom: 4px; }
+        .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; }
 
         .btn-action { 
             background: #64D2C1; 
             color: #121212; 
             border: none; 
-            padding: 20px; 
+            padding: 16px; 
             width: 100%; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: 800; 
-            border-radius: 18px; 
+            border-radius: 16px; 
             cursor: pointer; 
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(100, 210, 193, 0.2);
-            -webkit-tap-highlight-color: transparent;
+            transition: 0.2s;
+            box-shadow: 0 8px 16px rgba(100, 210, 193, 0.15);
         }
         
-        .btn-action:active { transform: scale(0.95); }
+        .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        .footer { margin-top: 40px; font-size: 10px; color: #444; letter-spacing: 3px; font-weight: 900; }
+        .footer { margin-top: 30px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         
+        input {
+            width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #333; 
+            background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; font-size: 16px;
+        }
+
         .hidden { display: none; }
+
+        /* Ajuste fino para telas muito pequenas */
+        @media (max-width: 320px) {
+            .qr-code { width: 140px; height: 140px; }
+            .brand-logo { font-size: 18px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Branding -->
     <div class="brand-logo">LOCAPP</div>
     <div class="pix-badge">
-        <img src="https://logospng.org/download/pix/logo-pix-1024.png" width="18" style="filter: grayscale(1) brightness(2)">
-        Pagamento Instantâneo via Pix
+        <img src="https://logospng.org/download/pix/logo-pix-1024.png" width="14" style="filter: grayscale(1) brightness(2)">
+        Pagamento Instantâneo
     </div>
 
-    <!-- Interface Dinâmica -->
+    <!-- Interface Gerador -->
     <div id="setup" class="hidden">
-        <h2 style="font-weight: 800;">Gerar Cobrança</h2>
-        <input type="text" id="nameInput" placeholder="Nome do Cliente" 
-               style="width:100%; padding:20px; border-radius:18px; border:1px solid #333; background:#1a1a1a; color:white; margin-bottom:20px; outline:none; font-size:16px">
-        <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
+        <h2 style="font-size: 20px; margin-bottom: 10px;">Gerar Link</h2>
+        <input type="text" id="nameInput" placeholder="Nome do Cliente">
+        <button class="btn-action" onclick="createLink()">Copiar e Visualizar Link</button>
     </div>
 
+    <!-- Interface Pagamento -->
     <div id="payment" class="hidden">
         <div class="welcome-msg" id="hi">Olá!</div>
         
@@ -143,11 +143,11 @@
             <div class="recebedor-nome">PALHARES</div>
         </div>
 
-        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Toque abaixo para copiar o código:</p>
+        <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Clique abaixo para copiar o código:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
-    <div class="footer">DEVELOPED BY PALHARES</div>
+    <div class="footer">POWERED BY PALHARES</div>
 </div>
 
 <script>
@@ -158,7 +158,7 @@
     if (user) {
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
-        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
+        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixCode)}`;
     } else {
         document.getElementById('setup').classList.remove('hidden');
     }
@@ -168,19 +168,18 @@
         if(!n) return alert("Digite o nome");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link copiado! Envie para " + n);
         window.location.href = link;
     }
 
     function copyPix() {
         navigator.clipboard.writeText(pixCode).then(() => {
             const b = document.getElementById('copyBtn');
-            b.innerText = "✓ PRONTO PARA COLAR";
+            b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
             setTimeout(() => {
                 b.innerText = "Copiar Código Pix";
                 b.classList.remove('btn-success');
-            }, 3000);
+            }, 2500);
         });
     }
 </script>
