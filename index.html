@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
-        /* Reset e Travamento de Scroll Lateral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         @keyframes slideUp {
@@ -39,20 +38,18 @@
         .container { 
             text-align: center; 
             width: 100%; 
-            max-width: 350px; /* Tamanho ideal para não sobrar no celular */
+            max-width: 350px; 
             display: flex;
             flex-direction: column;
             align-items: center; 
             animation: slideUp 0.6s ease-out;
         }
 
-        /* Logo do Pix com tamanho responsivo */
-        .pix-header-logo { 
-            width: 70px; 
+        /* Logo Pix em SVG (Indestrutível) */
+        .pix-logo-svg {
+            width: 75px;
             height: auto;
-            margin-bottom: 10px; 
-            filter: brightness(1.2); 
-            display: block;
+            margin-bottom: 15px;
         }
 
         .pix-badge-wrapper { 
@@ -72,7 +69,6 @@
             letter-spacing: 1px;
         }
 
-        /* Bonequinho Ousado */
         .avatar-container {
             font-size: 45px;
             margin-bottom: -8px;
@@ -109,7 +105,7 @@
             margin-bottom: 15px;
         }
 
-        .qr-code { width: 150px; height: 150px; display: block; }
+        .qr-code { width: 155px; height: 155px; display: block; }
         
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
         .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; margin: 0; }
@@ -131,8 +127,11 @@
 <body>
 
 <div class="container">
-    <!-- Nova URL da logo para evitar erros de carregamento no mobile -->
-    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_Pix.png" alt="Logo Pix" class="pix-header-logo">
+    <!-- SVG do Pix embutido para nunca falhar -->
+    <svg class="pix-logo-svg" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M312.4 186.2c-5.7-5.8-15.1-5.8-20.8 0l-25.2 25.2-25.2-25.2c-5.7-5.8-15.1-5.8-20.8 0-5.7 5.8-5.7 15.2 0 20.9l25.2 25.2-25.2 25.2c-5.7 5.8-5.7 15.2 0 20.9 5.7 5.8 15.1 5.8 20.8 0l25.2-25.2 25.2 25.2c5.7 5.8 15.1 5.8 20.8 0 5.7-5.8 5.7-15.2 0-20.9l-25.2-25.2 25.2-25.2c5.8-5.8 5.8-15.2 0-20.9z" fill="#64D2C1"/>
+        <path d="M441.2 110.1C390.6 59.4 323.3 31.4 251.2 31.4c-72.1 0-139.4 28-190 78.7-50.6 50.6-78.5 117.9-78.5 190 0 72.1 27.9 139.4 78.5 190 50.6 50.6 117.9 78.5 190 78.5 72.1 0 139.4-27.9 190-78.5 50.6-50.6 78.5-117.9 78.5-190 0-72.1-27.9-139.4-78.5-190zm-180.2 334c-100.9 0-183-82.1-183-183s82.1-183 183-183 183 82.1 183 183-82.1 183-183 183z" fill="#64D2C1"/>
+    </svg>
     
     <div class="pix-badge-wrapper">
         <div class="pix-badge">Pagamento Instantâneo</div>
