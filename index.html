@@ -139,6 +139,18 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            display: none; /* Oculto inicialmente */
+            margin-top: 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
         #expired-msg {
             display: none;
             flex-direction: column;
@@ -178,7 +190,6 @@
     
     <div class="pix-badge">Pagamento Instantâneo</div>
 
-    <!-- FORMULÁRIO DE CONFIGURAÇÃO -->
     <div id="setup" class="hidden" style="width: 100%;">
         <div class="card-main">
             <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link</h2>
@@ -188,7 +199,6 @@
         </div>
     </div>
 
-    <!-- TELA DE PAGAMENTO DO CLIENTE -->
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="hi" style="font-size: 18px; margin-bottom: 5px;">Olá!</div>
         <div id="display-value" style="font-size: 26px; font-weight: 900; color: #64D2C1; margin-bottom: 12px;">R$ 0,00</div>
@@ -203,6 +213,11 @@
             <div class="recebedor-nome">PALHARES</div>
         </div>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
+        
+        <!-- BOTÃO DO WHATSAPP (Inicia oculto) -->
+        <a href="#" id="whatsappBtn" class="btn-action btn-whatsapp" target="_blank" style="display: none;">
+            <span>📱 Enviar Comprovante</span>
+        </a>
     </div>
 
     <div id="expired-msg">
@@ -215,8 +230,8 @@
 </div>
 
 <script>
-    // DADOS FIXOS DO SEU PIX
     const CHAVE_PIX = "+5584991339061";
+    const MEU_WHATSAPP = "5584991339061"; // Sem o '+' para o link
     const NOME_RECEBEDOR = "FRANCISCO DE ASSIS ROCHA";
     const CIDADE_RECEBEDOR = "MOSSORO";
 
@@ -224,22 +239,20 @@
     const user = params.get('nome');
     const valorUrl = params.get('valor');
     
-    let finalPixCode = ""; // Variável que armazenará o código final
+    let finalPixCode = ""; 
+    let valorFormatadoGlobal = "0,00";
 
-    // INICIALIZAÇÃO
     if (user) {
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         
         const valorNumerico = valorUrl ? parseFloat(valorUrl.replace(',', '.')) : 0;
-        document.getElementById('display-value').innerText = valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        valorFormatadoGlobal = valorNumerico.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('display-value').innerText = "R$ " + valorFormatadoGlobal;
 
-        // Gera o código PIX com valor e recalcula o CRC
         finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
-        
         document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
         
-        // Lógica de Expiração
         const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
         const storageKey = 'locapp_deadline_' + btoa(user) + '_' + dateKey; 
         const savedDeadline = localStorage.getItem(storageKey);
@@ -248,25 +261,19 @@
         document.getElementById('setup').classList.remove('hidden');
     }
 
-    // FUNÇÃO PARA GERAR O CÓDIGO PIX PADRÃO BRCODE
     function gerarPix(chave, valor, nome, cidade) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
-        
         if (valor > 0) {
             const vStr = valor.toFixed(2);
             payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
         }
-
         payload += "5802BR";
         payload += "59" + nome.length.toString().padStart(2, '0') + nome;
         payload += "60" + cidade.length.toString().padStart(2, '0') + cidade;
         payload += "62070503PIX6304";
-
-        // Calcula o CRC16 e anexa ao final
         return payload + calcularCRC16(payload);
     }
 
-    // ALGORITMO CRC16 CCITT
     function calcularCRC16(str) {
         let crc = 0xFFFF;
         for (let i = 0; i < str.length; i++) {
@@ -296,9 +303,14 @@
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
             
+            // Mostrar botão do WhatsApp após copiar
+            const waBtn = document.getElementById('whatsappBtn');
+            const mensagem = encodeURIComponent(`Olá Palhares! Realizei o pagamento de R$ ${valorFormatadoGlobal}. Segue o comprovante.`);
+            waBtn.href = `https://wa.me/${MEU_WHATSAPP}?text=${mensagem}`;
+            waBtn.style.display = 'flex';
+
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
             const storageKey = 'locapp_deadline_' + btoa(user) + '_' + dateKey;
-            
             if (!localStorage.getItem(storageKey)) {
                 const deadline = new Date().getTime() + (5 * 60 * 1000);
                 localStorage.setItem(storageKey, deadline);
