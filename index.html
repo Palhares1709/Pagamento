@@ -59,6 +59,19 @@
             margin-bottom: 20px;
         }
 
+        /* Estilo do Cronômetro */
+        #timer-display {
+            display: none;
+            background: rgba(100, 210, 193, 0.1);
+            color: #64D2C1;
+            padding: 5px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            border: 1px solid rgba(100, 210, 193, 0.3);
+        }
+
         .avatar-money {
             font-size: 48px;
             margin-bottom: -10px;
@@ -175,7 +188,6 @@
 <body>
 
 <div class="container" id="main-content">
-    <!-- Logo Pix Inquebrável -->
     <svg class="pix-logo-svg" viewBox="0 0 132 46" xmlns="http://www.w3.org/2000/svg">
         <path d="M53.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#FFF"/>
         <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
@@ -196,6 +208,9 @@
     <!-- Tela de Pagamento -->
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
+        
+        <div id="timer-display">Expira em: <span id="countdown">05:00</span></div>
+        
         <div class="avatar-money">🤑</div>
         <div class="card-main">
             <div class="qr-wrapper">
@@ -259,6 +274,26 @@
         document.getElementById('setup').classList.remove('hidden');
     }
 
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        let interval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(interval);
+                document.getElementById('payment').style.display = 'none';
+                document.getElementById('expired-msg').style.display = 'flex';
+                localStorage.setItem('finalizado_' + user, 'true');
+            }
+        }, 1000);
+    }
+
     function createLink() {
         const n = document.getElementById('nameInput').value;
         if(!n) return alert("Digite o nome do cliente.");
@@ -274,14 +309,13 @@
             const b = document.getElementById('copyBtn');
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
+            
+            document.getElementById('timer-display').style.display = 'inline-block';
             document.getElementById('bank-selector').style.display = 'block';
             window.scrollBy({ top: 180, behavior: 'smooth' });
 
-            setTimeout(() => {
-                document.getElementById('payment').style.display = 'none';
-                document.getElementById('expired-msg').style.display = 'flex';
-                localStorage.setItem('finalizado_' + user, 'true');
-            }, 300000); 
+            // Inicia cronômetro de 5 minutos (300 segundos)
+            startTimer(300, document.querySelector('#countdown'));
         });
     }
 </script>
