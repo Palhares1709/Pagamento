@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
-        /* Ajuste para ocupar a tela inteira e evitar rolagem desnecessária */
+        /* Reset e Configurações de Tela */
         * { box-sizing: border-box; }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         body { 
-            font-family: sans-serif; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background-color: #121212; 
             color: white; 
             display: flex; 
@@ -17,71 +22,101 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 15px; /* Respiro nas bordas do celular */
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .card { 
             background: #121212; 
             text-align: center; 
             width: 100%; 
-            max-width: 450px; /* Um pouco mais largo para telas maiores */
+            max-width: 420px; 
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
 
-        .pix-logo { width: 120px; margin: 0 auto 20px; filter: brightness(1.2); }
+        .pix-logo { 
+            width: 110px; 
+            margin: 0 auto 25px; 
+            filter: brightness(1.2); 
+        }
         
+        /* Container do QR Code com brilho sutil */
         .qr-container { 
-            border: 2px dashed #444; 
-            border-radius: 20px; 
-            padding: 30px 20px; 
+            border: 2px dashed #333; 
+            border-radius: 24px; 
+            padding: 35px 20px; 
             margin-bottom: 25px; 
-            background-color: #1a1a1a; 
+            background-color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+
+        .qr-container:hover {
+            border-color: #64D2C1;
+            box-shadow: 0 0 20px rgba(100, 210, 193, 0.15);
         }
 
         .qr-code { 
-            width: 180px; /* Aumentado para facilitar a leitura no celular */
-            height: 180px; 
+            width: 190px; 
+            height: 190px; 
             background-color: white; 
-            padding: 10px; 
-            border-radius: 12px; 
+            padding: 12px; 
+            border-radius: 16px; 
             margin-bottom: 15px;
         }
         
         .nome-recebedor { 
             display: block;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
             color: #64D2C1; 
         }
 
-        h2 { font-size: 24px; margin-top: 0; margin-bottom: 10px; }
-        p { color: #bbb; font-size: 15px; margin-bottom: 20px; }
+        h2 { font-size: 24px; margin: 0 0 10px; font-weight: 600; }
+        p { color: #888; font-size: 15px; margin-bottom: 25px; line-height: 1.4; }
 
+        /* Botão de Cópia */
         .btn-copiar { 
             background-color: #64D2C1; 
             color: #121212; 
             border: none; 
             padding: 18px; 
             width: 100%; 
-            font-size: 18px; 
+            font-size: 17px; 
             font-weight: bold; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             cursor: pointer; 
-            transition: 0.2s;
-            -webkit-tap-highlight-color: transparent; /* Remove o brilho ao tocar no mobile */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(100, 210, 193, 0.2);
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-copiar:active { transform: scale(0.96); opacity: 0.9; }
-        .btn-success { background-color: #4CAF50 !important; color: white !important; }
+        .btn-copiar:active { transform: scale(0.97); }
+        
+        .btn-success { 
+            background-color: #4CAF50 !important; 
+            color: white !important; 
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
 
-        /* Ajustes específicos para telas muito pequenas */
-        @media (max-height: 600px) {
-            .pix-logo { width: 80px; margin-bottom: 10px; }
-            .qr-container { padding: 15px; margin-bottom: 15px; }
-            .qr-code { width: 140px; height: 140px; }
-            h2 { font-size: 20px; }
+        /* Rodapé de Marca */
+        .footer {
+            margin-top: 40px;
+            font-size: 10px;
+            color: #444;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Ajuste para telas pequenas/landscape */
+        @media (max-height: 650px) {
+            body { padding: 10px; }
+            .pix-logo { width: 80px; margin-bottom: 15px; }
+            .qr-container { padding: 20px 15px; margin-bottom: 15px; }
+            .qr-code { width: 150px; height: 150px; }
+            .footer { margin-top: 20px; }
         }
     </style>
 </head>
@@ -95,31 +130,41 @@
     <div class="qr-container">
         <img src="" alt="QR Code" class="qr-code" id="qr-image">
         <span class="nome-recebedor">Recebedor: Palhares</span>
-        <p style="margin: 10px 0 0; font-size: 13px; color: #888;">Aponte a câmera para o QR Code</p>
+        <p style="margin: 12px 0 0; font-size: 13px; color: #666;">Aponte a câmera para o código acima</p>
     </div>
 
-    <p>Ou copie o código para o seu banco:</p>
+    <p>Ou utilize o método <strong>Copia e Cola</strong> abaixo:</p>
+    
     <button class="btn-copiar" id="btnCopiar" onclick="copiarCodigo()">Copiar Código Pix</button>
+
+    <div class="footer">Powered by Locapp</div>
 </div>
 
 <script>
+    // Código Pix estático fornecido pelo usuário
     const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
 
-    // Gera o QR Code com o código Pix
-    document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
+    // Gera o QR Code dinamicamente com base no código Pix acima
+    const qrImg = document.getElementById('qr-image');
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
 
     function copiarCodigo() {
         navigator.clipboard.writeText(meuPix).then(() => {
             const btn = document.getElementById('btnCopiar');
             const originalText = btn.innerText;
             
-            btn.innerText = "✓ Copiado!";
+            // Feedback visual de sucesso
+            btn.innerText = "✓ Código Copiado!";
             btn.classList.add('btn-success');
             
+            // Retorna ao estado original após 2.5 segundos
             setTimeout(() => {
                 btn.innerText = originalText;
                 btn.classList.remove('btn-success');
-            }, 2000);
+            }, 2500);
+        }).catch(err => {
+            console.error('Erro ao copiar: ', err);
+            alert("Não foi possível copiar automaticamente. Por favor, tente selecionar o código manualmente.");
         });
     }
 </script>
