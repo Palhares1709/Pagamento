@@ -46,11 +46,13 @@
             animation: slideUp 0.6s ease-out;
         }
 
+        /* Ajuste para a logo não cortar */
         .pix-logo-svg { 
-            width: 70px; 
+            width: 80px; 
             height: auto; 
             margin-bottom: 12px; 
-            display: block; 
+            display: block;
+            overflow: visible;
         }
 
         .pix-badge {
@@ -138,8 +140,8 @@
 <body>
 
 <div class="container" id="main-content">
-    <!-- SVG Ajustado para não cortar o P -->
-    <svg class="pix-logo-svg" viewBox="-5 0 140 46" xmlns="http://www.w3.org/2000/svg">
+    <!-- SVG Corrigido com recuo à esquerda para não cortar o P -->
+    <svg class="pix-logo-svg" viewBox="-10 0 150 46" xmlns="http://www.w3.org/2000/svg">
         <path d="M51.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#FFF"/>
         <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
         <path d="M25.753 23.9a10.342 10.342 0 01-3.03 7.311l-7.001 7.001a1.29 1.29 0 01-1.824 0l-7.002-7.001a10.344 10.344 0 010-14.622l7.002-7.002a1.29 1.29 0 011.824 0l7.001 7.002c1.954 1.954 3.03 4.552 3.03 7.31z" stroke="#64D2C1" stroke-width="2.5" fill="none"/>
@@ -186,7 +188,6 @@
     const params = new URLSearchParams(window.location.search);
     const user = params.get('nome');
     
-    // Identificador único por dia
     const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
     const storageKey = 'locapp_deadline_' + btoa(user) + '_' + dateKey; 
 
@@ -218,7 +219,6 @@
                 (minutes < 10 ? "0" + minutes : minutes) + ":" + 
                 (seconds < 10 ? "0" + seconds : seconds);
 
-            // Alerta visual no último minuto
             if (distance < 60000) {
                 timerDisplay.style.color = "#ff4d4d";
                 timerDisplay.style.borderColor = "rgba(255, 77, 77, 0.3)";
@@ -249,7 +249,6 @@
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
             
-            // Inicia o cronômetro apenas se não houver um ativo
             if (!localStorage.getItem(storageKey)) {
                 const deadline = new Date().getTime() + (5 * 60 * 1000);
                 localStorage.setItem(storageKey, deadline);
