@@ -12,10 +12,11 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes itchyHand {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-8deg) translateX(-3px); }
-            75% { transform: rotate(8deg) translateX(3px); }
+        /* Animação: Bonequinho "contando" ou "abanando" o dinheiro */
+        @keyframes moneyFlow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(-10deg); }
+            75% { transform: translateY(-2px) rotate(10deg); }
         }
 
         html, body { 
@@ -27,7 +28,7 @@
         }
 
         body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
+            font-family: 'Inter', sans-serif; 
             color: white; 
             display: flex; 
             justify-content: center; 
@@ -45,20 +46,11 @@
             animation: slideUp 0.6s ease-out;
         }
 
-        /* Logo do Pix - Ajustado para não cortar */
         .pix-header-logo {
             width: 80px;
             height: auto;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             filter: brightness(1.2);
-            display: block;
-        }
-
-        .pix-badge-wrapper { 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            margin-bottom: 15px; 
         }
 
         .pix-badge {
@@ -69,15 +61,18 @@
             color: #999;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-bottom: 20px;
         }
 
-        .avatar-container {
-            font-size: 45px;
-            margin-bottom: -5px;
+        /* O novo bonequinho contando dinheiro */
+        .money-avatar {
+            font-size: 50px;
+            margin-bottom: -10px;
             display: inline-block;
-            animation: itchyHand 0.4s infinite;
-            filter: drop-shadow(0 0 8px rgba(100, 210, 193, 0.4));
-            z-index: 2;
+            animation: moneyFlow 0.8s infinite;
+            filter: drop-shadow(0 0 10px rgba(100, 210, 193, 0.5));
+            z-index: 5;
+            cursor: default;
         }
 
         .card-main {
@@ -89,6 +84,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
 
         .qr-wrapper {
@@ -109,6 +105,7 @@
             width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; 
             cursor: pointer; transition: 0.2s;
             box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15);
+            margin-top: 20px;
         }
         
         .btn-action:active { transform: scale(0.97); }
@@ -120,7 +117,6 @@
             color: #444; 
             letter-spacing: 2px; 
             font-weight: 900; 
-            text-transform: uppercase;
         }
 
         .hidden { display: none; }
@@ -135,24 +131,27 @@
 <body>
 
 <div class="container">
-    <!-- Imagem estável para garantir exibição total sem cortes -->
+    <!-- Logo do Pix via link direto estável -->
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_Pix.png" alt="Logo Pix" class="pix-header-logo">
     
-    <div class="pix-badge-wrapper">
-        <div class="pix-badge">Pagamento Instantâneo</div>
-    </div>
+    <div class="pix-badge">Pagamento Instantâneo</div>
 
+    <!-- Tela Inicial: Gerador -->
     <div id="setup" class="hidden" style="width: 100%;">
         <div class="card-main">
-            <h2 style="font-size: 20px; margin-bottom: 15px;">Gerar Link</h2>
+            <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
             <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
         </div>
     </div>
 
+    <!-- Tela de Pagamento: O Cliente vê isso -->
     <div id="payment" class="hidden" style="width: 100%;">
-        <div class="welcome-msg" id="hi" style="font-size: 18px; margin-bottom: 15px;">Olá!</div>
-        <div class="avatar-container">🤑</div>
+        <div id="hi" style="font-size: 18px; margin-bottom: 15px; font-weight: 300;">Olá!</div>
+        
+        <!-- Bonequinho contando dinheiro animado -->
+        <div class="money-avatar">💸💸</div>
+        
         <div class="card-main">
             <div class="qr-wrapper">
                 <img src="" alt="QR Code" class="qr-code" id="qr">
@@ -160,7 +159,8 @@
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
         </div>
-        <p style="color: #666; font-size: 13px; margin: 20px 0 15px;">Clique abaixo para copiar o código:</p>
+        
+        <p style="color: #666; font-size: 13px; margin: 15px 0 0;">Clique abaixo para copiar o código:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
@@ -185,7 +185,7 @@
         if(!n) return alert("Digite o nome");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link gerado e copiado!");
+        alert("Link copiado! Envie para seu cliente.");
         window.location.href = link;
     }
 
