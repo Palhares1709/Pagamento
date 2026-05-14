@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Pix - Palhares</title>
+    <style>
+        body { font-family: sans-serif; background-color: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #121212; padding: 20px; text-align: center; width: 100%; max-width: 400px; }
+        .pix-logo { width: 100px; margin-bottom: 20px; filter: brightness(1.2); }
+        
+        .qr-container { border: 2px dashed #444; border-radius: 15px; padding: 20px; margin-bottom: 20px; background-color: #1a1a1a; }
+        .qr-code { width: 130px; height: 130px; background-color: white; padding: 8px; border-radius: 8px; }
+        
+        /* Estilo para o seu nome */
+        .nome-recebedor { 
+            display: block;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #64D2C1; /* Cor verde água para destacar */
+        }
+
+        h2 { font-size: 22px; margin-bottom: 15px; }
+        p { color: #bbb; font-size: 14px; margin-bottom: 20px; }
+        .btn-copiar { background-color: #64D2C1; color: #121212; border: none; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+        .btn-copiar:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-logo">
+    
+    <h2>Realizar Pagamento</h2>
+    
+    <div class="qr-container">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SEU_CODIGO_PIX_AQUI" alt="QR Code" class="qr-code">
+        
+        <!-- Seu nome inserido aqui -->
+        <span class="nome-recebedor">Recebedor: Palhares</span>
+        
+        <p style="margin-top: 5px; font-size: 12px; color: #888;">Aponte a câmera para o QR Code</p>
+    </div>
+
+    <p>Ou copie o código para o seu banco:</p>
+    <button class="btn-copiar" onclick="copiarCodigo()">Copiar Código Pix</button>
+</div>
+
+<script>
+    function copiarCodigo() {
+        const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
+        navigator.clipboard.writeText(meuPix);
+        alert("Código copiado para Palhares!");
+    }
+</script>
+
+</body>
+</html>
