@@ -60,6 +60,7 @@
         }
 
         #timer-display {
+            display: none; /* Escondido por padrão */
             background: rgba(100, 210, 193, 0.1);
             color: #64D2C1;
             padding: 5px 15px;
@@ -68,7 +69,6 @@
             font-weight: 800;
             margin-bottom: 15px;
             border: 1px solid rgba(100, 210, 193, 0.3);
-            display: inline-block;
         }
 
         .avatar-money {
@@ -251,27 +251,24 @@
     const pixCode = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
     const params = new URLSearchParams(window.location.search);
     const user = params.get('nome');
-    const storageKey = 'expiracao_' + user;
+    const storageKey = 'deadline_' + btoa(user); 
 
     if (user) {
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
         
-        // Iniciar cronômetro assim que a página abre
-        initExpiration();
+        // Verifica se a contagem já tinha começado anteriormente
+        if (localStorage.getItem(storageKey)) {
+            startExpirationLogic(localStorage.getItem(storageKey));
+        }
     } else {
         document.getElementById('setup').classList.remove('hidden');
     }
 
-    function initExpiration() {
-        let deadline = localStorage.getItem(storageKey);
-        
-        // Se não existir um horário de expiração salvo, criar um agora (agora + 5 min)
-        if (!deadline) {
-            deadline = new Date().getTime() + (5 * 60 * 1000);
-            localStorage.setItem(deadlineKey(), deadline);
-        }
+    function startExpirationLogic(deadline) {
+        document.getElementById('timer-display').style.display = 'inline-block';
+        document.getElementById('bank-selector').style.display = 'block';
 
         const x = setInterval(function() {
             const now = new Date().getTime();
@@ -293,11 +290,6 @@
         }, 1000);
     }
 
-    // Função auxiliar para criar chave única por link de cliente
-    function deadlineKey() {
-        return 'deadline_' + btoa(user); 
-    }
-
     function createLink() {
         const n = document.getElementById('nameInput').value;
         if(!n) return alert("Digite o nome do cliente.");
@@ -313,7 +305,14 @@
             const b = document.getElementById('copyBtn');
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
-            document.getElementById('bank-selector').style.display = 'block';
+            
+            // Define o tempo de expiração apenas se ainda não existir um salvo
+            if (!localStorage.getItem(storageKey)) {
+                const deadline = new Date().getTime() + (5 * 60 * 1000);
+                localStorage.setItem(storageKey, deadline);
+                startExpirationLogic(deadline);
+            }
+            
             window.scrollBy({ top: 180, behavior: 'smooth' });
         });
     }
