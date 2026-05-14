@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
-        /* Reset Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         @keyframes slideUp {
@@ -13,12 +12,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        html, body {
-            overflow-x: hidden;
-            width: 100%;
-            height: 100%;
-            margin: 0;
+        /* Animação do Bonequinho coçando a mão */
+        @keyframes itchyHand {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg) translateX(-2px); }
+            75% { transform: rotate(5deg) translateX(2px); }
         }
+
+        html, body { overflow-x: hidden; width: 100%; height: 100%; margin: 0; }
 
         body { 
             font-family: 'Inter', -apple-system, sans-serif; 
@@ -36,25 +37,13 @@
             max-width: 360px;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Garante centralização horizontal de todos os filhos */
+            align-items: center; 
             animation: slideUp 0.6s ease-out;
         }
 
-        /* Alinhamento da Logo */
-        .pix-header-logo {
-            width: 80px;
-            margin-bottom: 12px;
-            filter: brightness(1.2);
-            display: block; /* Garante que a logo se comporte como bloco para centralizar */
-        }
+        .pix-header-logo { width: 80px; margin-bottom: 12px; filter: brightness(1.2); }
 
-        /* Correção Definitiva da Badge: Centralização Forçada */
-        .pix-badge-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
+        .pix-badge-wrapper { width: 100%; display: flex; justify-content: center; margin-bottom: 20px; }
 
         .pix-badge {
             background: rgba(255, 255, 255, 0.05);
@@ -62,10 +51,17 @@
             border-radius: 20px;
             font-size: 11px;
             color: #888;
-            white-space: nowrap;
         }
 
-        /* Estilo do Card Principal */
+        /* O Bonequinho Ousado */
+        .avatar-container {
+            font-size: 50px;
+            margin-bottom: -10px;
+            display: inline-block;
+            animation: itchyHand 0.5s infinite;
+            filter: drop-shadow(0 0 10px rgba(100, 210, 193, 0.3));
+        }
+
         .card-main {
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
@@ -75,29 +71,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
 
-        h2 { font-size: 22px; margin: 0 0 20px; font-weight: 700; color: white; }
+        h2 { font-size: 22px; margin: 0 0 20px; font-weight: 700; }
 
         input {
-            width: 100%; 
-            padding: 18px; 
-            border-radius: 16px; 
-            border: 1px solid #333; 
-            background: #1a1a1a; 
-            color: white; 
-            margin-bottom: 20px; 
-            outline: none; 
-            font-size: 16px;
-            text-align: center;
-            transition: 0.3s;
+            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; 
+            background: #1a1a1a; color: white; margin-bottom: 20px; outline: none; 
+            font-size: 16px; text-align: center;
         }
 
-        input:focus { border-color: #64D2C1; }
-
-        .welcome-msg { font-size: 18px; margin-bottom: 15px; font-weight: 300; }
-        .welcome-msg b { color: #64D2C1; font-weight: 700; }
-        
         .qr-wrapper {
             background: white;
             padding: 12px;
@@ -109,19 +93,12 @@
         .qr-code { width: 160px; height: 160px; display: block; }
         
         .recebedor-label { font-size: 11px; color: #666; letter-spacing: 2px; margin-bottom: 4px; }
-        .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; margin-bottom: 0; }
+        .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin-bottom: 0; }
 
         .btn-action { 
-            background: #64D2C1; 
-            color: #121212; 
-            border: none; 
-            padding: 18px; 
-            width: 100%; 
-            font-size: 16px; 
-            font-weight: 800; 
-            border-radius: 16px; 
-            cursor: pointer; 
-            transition: 0.2s;
+            background: #64D2C1; color: #121212; border: none; padding: 18px; 
+            width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; 
+            cursor: pointer; transition: 0.2s;
             box-shadow: 0 8px 16px rgba(100, 210, 193, 0.15);
         }
         
@@ -129,7 +106,6 @@
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
         .footer { margin-top: 30px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
-        
         .hidden { display: none; }
     </style>
 </head>
@@ -153,7 +129,11 @@
 
     <!-- Interface Pagamento -->
     <div id="payment" class="hidden" style="width: 100%;">
-        <div class="welcome-msg" id="hi">Olá!</div>
+        <div class="welcome-msg" id="hi" style="font-size: 18px; margin-bottom: 15px;">Olá!</div>
+        
+        <!-- O Bonequinho Ousado aparece aqui -->
+        <div class="avatar-container">🤑</div>
+        
         <div class="card-main">
             <div class="qr-wrapper">
                 <img src="" alt="QR Code" class="qr-code" id="qr">
@@ -183,10 +163,9 @@
 
     function createLink() {
         const n = document.getElementById('nameInput').value;
-        if(!n) return alert("Por favor, digite o nome do cliente.");
+        if(!n) return alert("Digite o nome");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link gerado e copiado! Agora você pode enviá-lo.");
         window.location.href = link;
     }
 
