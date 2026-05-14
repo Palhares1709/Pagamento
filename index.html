@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pagamento Pix - Palhares</title>
+    <title>Pagamento Pix - Locapp</title>
     <style>
         * { box-sizing: border-box; }
         
@@ -22,32 +22,42 @@
             min-height: 100vh; 
             margin: 0; 
             padding: 20px;
-            animation: fadeIn 0.8s ease-out;
         }
 
-        .card { 
+        .container { 
             text-align: center; 
             width: 100%; 
             max-width: 420px; 
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .pix-logo { 
-            width: 100px; 
-            margin-bottom: 20px; 
-            filter: brightness(1.2); 
+        .pix-logo { width: 100px; margin-bottom: 20px; filter: brightness(1.2); }
+
+        /* Estilo do Gerador (Input) */
+        .generator-card {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid #333;
         }
 
-        /* Mensagem de Boas-vindas Personalizada */
-        .welcome-msg {
-            font-size: 18px;
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #444;
+            background: #222;
+            color: white;
+            font-size: 16px;
             margin-bottom: 20px;
-            color: #eee;
+            outline: none;
         }
-        
-        .welcome-msg span {
-            color: #64D2C1;
-            font-weight: bold;
-        }
+
+        input:focus { border-color: #64D2C1; }
+
+        /* Estilo do Cartão de Pagamento */
+        .welcome-msg { font-size: 18px; margin-bottom: 20px; color: #eee; }
+        .welcome-msg span { color: #64D2C1; font-weight: bold; }
         
         .qr-container { 
             border: 2px dashed #333; 
@@ -56,118 +66,120 @@
             margin-bottom: 25px; 
             background-color: #1a1a1a;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: 0.3s;
-        }
-
-        .qr-container:hover {
-            border-color: #64D2C1;
         }
 
         .qr-code { 
-            width: 200px; 
-            height: 200px; 
+            width: 200px; height: 200px; 
             background-color: white; 
-            padding: 12px; 
-            border-radius: 18px; 
+            padding: 12px; border-radius: 18px; 
             margin-bottom: 15px;
         }
         
         .nome-recebedor { 
-            display: block;
-            font-size: 16px;
-            font-weight: 600;
-            color: #64D2C1; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: block; font-size: 16px; font-weight: 600; 
+            color: #64D2C1; text-transform: uppercase; letter-spacing: 1px;
         }
 
-        h2 { font-size: 22px; margin: 0 0 10px; font-weight: 600; }
-        .instrucao { color: #888; font-size: 14px; margin-bottom: 25px; }
-
-        .btn-copiar { 
+        .btn-principal { 
             background-color: #64D2C1; 
             color: #121212; 
             border: none; 
-            padding: 20px; 
+            padding: 18px; 
             width: 100%; 
             font-size: 16px; 
             font-weight: bold; 
             border-radius: 16px; 
             cursor: pointer; 
-            transition: all 0.3s;
+            transition: 0.3s;
             box-shadow: 0 4px 15px rgba(100, 210, 193, 0.2);
             -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-copiar:active { transform: scale(0.96); }
-        
-        .btn-success { 
-            background-color: #4CAF50 !important; 
-            color: white !important; 
-        }
+        .btn-principal:active { transform: scale(0.96); }
+        .btn-success { background-color: #4CAF50 !important; color: white !important; }
 
-        .footer {
-            margin-top: 40px;
-            font-size: 10px;
-            color: #444;
-            letter-spacing: 2px;
-            font-weight: bold;
-        }
+        .footer { margin-top: 40px; font-size: 10px; color: #444; letter-spacing: 2px; font-weight: bold; }
+        
+        /* Esconder seções dinamicamente */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="container">
     <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-logo">
-    
-    <!-- Onde o nome do cliente aparecerá -->
-    <div class="welcome-msg" id="msgBoasVindas">Olá!</div>
 
-    <h2>Finalizar Pagamento</h2>
-    
-    <div class="qr-container">
-        <img src="" alt="QR Code" class="qr-code" id="qr-image">
-        <span class="nome-recebedor">Recebedor: Palhares</span>
-        <p style="margin: 12px 0 0; font-size: 12px; color: #555;">Escaneie o QR Code acima</p>
+    <!-- SEÇÃO 1: GERADOR (Aparece primeiro) -->
+    <div id="section-generator" class="generator-card hidden">
+        <h2 style="margin-top:0">Configurar Link</h2>
+        <p style="color:#888; font-size:14px">Digite o nome do cliente para gerar o link personalizado:</p>
+        <input type="text" id="input-nome" placeholder="Nome do cliente (ex: João)">
+        <button class="btn-principal" onclick="gerarLink()">Gerar Link de Pagamento</button>
     </div>
 
-    <p class="instrucao">Ou clique abaixo para copiar o código <strong>Copia e Cola</strong>:</p>
-    
-    <button class="btn-copiar" id="btnCopiar" onclick="copiarCodigo()">Copiar Código Pix</button>
+    <!-- SEÇÃO 2: CARTÃO DE PAGAMENTO (Aparece após o link ser clicado) -->
+    <div id="section-payment" class="hidden">
+        <div class="welcome-msg" id="msgBoasVindas">Olá!</div>
+        <h2 style="font-size: 22px; margin-bottom: 10px;">Finalizar Pagamento</h2>
+        
+        <div class="qr-container">
+            <img src="" alt="QR Code" class="qr-code" id="qr-image">
+            <span class="nome-recebedor">Recebedor: Palhares</span>
+            <p style="margin: 12px 0 0; font-size: 12px; color: #555;">Escaneie o QR Code acima</p>
+        </div>
+
+        <p style="color: #888; font-size: 14px; margin-bottom: 25px;">Ou copie o código <strong>Copia e Cola</strong>:</p>
+        <button class="btn-principal" id="btnCopiar" onclick="copiarCodigo()">Copiar Código Pix</button>
+    </div>
 
     <div class="footer">POWERED BY LOCAPP</div>
 </div>
 
 <script>
-    // 1. Lógica para pegar o nome da URL
+    const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
+    
+    // Captura parâmetros da URL
     const urlParams = new URLSearchParams(window.location.search);
     const nomeCliente = urlParams.get('nome');
-    const msgElemento = document.getElementById('msgBoasVindas');
 
+    // Elementos das seções
+    const secGenerator = document.getElementById('section-generator');
+    const secPayment = document.getElementById('section-payment');
+
+    // LÓGICA DE EXIBIÇÃO
     if (nomeCliente) {
-        msgElemento.innerHTML = `Olá, <span>${nomeCliente}</span>!`;
+        // Mostra cartão de pagamento
+        secPayment.classList.remove('hidden');
+        document.getElementById('msgBoasVindas').innerHTML = `Olá, <span>${nomeCliente}</span>!`;
+        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
     } else {
-        msgElemento.innerHTML = `Olá!`;
+        // Mostra gerador
+        secGenerator.classList.remove('hidden');
     }
 
-    // 2. Dados do Pix
-    const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
+    // Função para o Gerador
+    function gerarLink() {
+        const nome = document.getElementById('input-nome').value;
+        if (!nome) { alert("Por favor, digite um nome."); return; }
+        
+        const novoLink = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(nome);
+        
+        // Copia o link gerado e avisa o usuário
+        navigator.clipboard.writeText(novoLink);
+        alert("Link gerado e copiado com sucesso para o cliente: " + nome);
+        
+        // Opcional: Redireciona para o próprio link para você ver como ficou
+        window.location.href = novoLink;
+    }
 
-    // 3. Gerar QR Code
-    const qrImg = document.getElementById('qr-image');
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
-
-    // 4. Função Copiar
+    // Função Copiar Pix
     function copiarCodigo() {
         navigator.clipboard.writeText(meuPix).then(() => {
             const btn = document.getElementById('btnCopiar');
-            const originalText = btn.innerText;
-            
             btn.innerText = "✓ CÓDIGO COPIADO!";
             btn.classList.add('btn-success');
-            
             setTimeout(() => {
-                btn.innerText = originalText;
+                btn.innerText = "Copiar Código Pix";
                 btn.classList.remove('btn-success');
             }, 2500);
         });
