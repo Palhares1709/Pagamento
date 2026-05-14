@@ -18,15 +18,23 @@
             100% { transform: scale(1); }
         }
 
-        html, body { overflow-x: hidden; width: 100%; height: 100%; margin: 0; background: #121212; }
+        /* PERMITIR ROLAGEM: Ajuste fundamental para mobile */
+        html, body { 
+            overflow-x: hidden; 
+            overflow-y: auto; /* Reativa a rolagem vertical */
+            width: 100%; 
+            min-height: 100%; 
+            margin: 0; 
+            background: #121212; 
+        }
 
         body { 
             font-family: 'Inter', -apple-system, sans-serif; 
             color: white; 
             display: flex; 
             justify-content: center; 
-            align-items: center; 
-            padding: 15px;
+            align-items: flex-start; /* Alinha ao topo para permitir rolagem natural */
+            padding: 40px 15px; /* Espaço extra no topo e base */
         }
 
         .container { 
@@ -39,11 +47,10 @@
             animation: slideUp 0.6s ease-out;
         }
 
-        /* LOGO PIX - Ajustado para não cortar conforme image_9fd264.png */
         .pix-logo-svg {
             width: 85px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: block;
         }
 
@@ -51,14 +58,13 @@
             background: rgba(255, 255, 255, 0.07);
             padding: 4px 12px;
             border-radius: 20px;
-            font-size: 9px; /* Fonte reduzida conforme sugerido */
+            font-size: 9px;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        /* Bonequinho com dinheiro na boca */
         .avatar-money {
             font-size: 48px;
             margin-bottom: -10px;
@@ -115,7 +121,6 @@
 <body>
 
 <div class="container">
-    <!-- SVG do Pix com ViewBox corrigida para evitar cortes -->
     <svg class="pix-logo-svg" viewBox="0 0 132 46" xmlns="http://www.w3.org/2000/svg">
         <path d="M53.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#FFF"/>
         <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
@@ -134,10 +139,7 @@
 
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
-        
-        <!-- Bonequinho com dinheiro na boca -->
         <div class="avatar-money">🤑</div>
-        
         <div class="card-main">
             <div class="qr-wrapper">
                 <img src="" alt="QR Code" class="qr-code" id="qr">
@@ -145,7 +147,6 @@
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
         </div>
-        
         <p style="color: #666; font-size: 12px; margin: 15px 0 0;">Toque abaixo para copiar:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
