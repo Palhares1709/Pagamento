@@ -7,14 +7,20 @@
     <style>
         * { box-sizing: border-box; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(100, 210, 193, 0.4); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(100, 210, 193, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(100, 210, 193, 0); }
+        }
+
         body { 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            background-color: #121212; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: radial-gradient(circle at top right, #1e1e1e, #121212);
             color: white; 
             display: flex; 
             justify-content: center; 
@@ -27,161 +33,154 @@
         .container { 
             text-align: center; 
             width: 100%; 
-            max-width: 420px; 
-            animation: fadeIn 0.8s ease-out;
+            max-width: 400px; 
+            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .pix-logo { width: 100px; margin-bottom: 20px; filter: brightness(1.2); }
-
-        /* Estilo do Gerador (Input) */
-        .generator-card {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 24px;
-            border: 1px solid #333;
+        /* Espaço para o SEU Logo */
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #64D2C1;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
         }
 
-        input {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #444;
-            background: #222;
-            color: white;
-            font-size: 16px;
-            margin-bottom: 20px;
-            outline: none;
+        .pix-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 30px;
         }
 
-        input:focus { border-color: #64D2C1; }
-
-        /* Estilo do Cartão de Pagamento */
-        .welcome-msg { font-size: 18px; margin-bottom: 20px; color: #eee; }
-        .welcome-msg span { color: #64D2C1; font-weight: bold; }
+        .welcome-msg { font-size: 20px; margin-bottom: 10px; font-weight: 300; }
+        .welcome-msg b { color: #64D2C1; font-weight: 700; }
         
-        .qr-container { 
-            border: 2px dashed #333; 
-            border-radius: 28px; 
-            padding: 35px 20px; 
+        /* Efeito de Vidro no Card */
+        .card { 
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px; 
+            padding: 40px 25px; 
             margin-bottom: 25px; 
-            background-color: #1a1a1a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .qr-code { 
-            width: 200px; height: 200px; 
-            background-color: white; 
-            padding: 12px; border-radius: 18px; 
-            margin-bottom: 15px;
+        .qr-wrapper {
+            background: white;
+            padding: 15px;
+            border-radius: 24px;
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
         }
+
+        .qr-code { width: 180px; height: 180px; display: block; }
         
-        .nome-recebedor { 
-            display: block; font-size: 16px; font-weight: 600; 
-            color: #64D2C1; text-transform: uppercase; letter-spacing: 1px;
+        .recebedor-label { 
+            font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;
         }
 
-        .btn-principal { 
-            background-color: #64D2C1; 
+        .recebedor-nome { 
+            font-size: 18px; font-weight: 700; color: #64D2C1; margin-bottom: 0;
+        }
+
+        .btn-action { 
+            background: #64D2C1; 
             color: #121212; 
             border: none; 
-            padding: 18px; 
+            padding: 20px; 
             width: 100%; 
             font-size: 16px; 
-            font-weight: bold; 
-            border-radius: 16px; 
+            font-weight: 800; 
+            border-radius: 18px; 
             cursor: pointer; 
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(100, 210, 193, 0.2);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(100, 210, 193, 0.2);
             -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-principal:active { transform: scale(0.96); }
-        .btn-success { background-color: #4CAF50 !important; color: white !important; }
+        .btn-action:active { transform: scale(0.95); }
+        .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        .footer { margin-top: 40px; font-size: 10px; color: #444; letter-spacing: 2px; font-weight: bold; }
+        .footer { margin-top: 40px; font-size: 10px; color: #444; letter-spacing: 3px; font-weight: 900; }
         
-        /* Esconder seções dinamicamente */
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-logo">
-
-    <!-- SEÇÃO 1: GERADOR (Aparece primeiro) -->
-    <div id="section-generator" class="generator-card hidden">
-        <h2 style="margin-top:0">Configurar Link</h2>
-        <p style="color:#888; font-size:14px">Digite o nome do cliente para gerar o link personalizado:</p>
-        <input type="text" id="input-nome" placeholder="Nome do cliente (ex: João)">
-        <button class="btn-principal" onclick="gerarLink()">Gerar Link de Pagamento</button>
+    <!-- Branding -->
+    <div class="brand-logo">LOCAPP</div>
+    <div class="pix-badge">
+        <img src="https://logospng.org/download/pix/logo-pix-1024.png" width="18" style="filter: grayscale(1) brightness(2)">
+        Pagamento Instantâneo via Pix
     </div>
 
-    <!-- SEÇÃO 2: CARTÃO DE PAGAMENTO (Aparece após o link ser clicado) -->
-    <div id="section-payment" class="hidden">
-        <div class="welcome-msg" id="msgBoasVindas">Olá!</div>
-        <h2 style="font-size: 22px; margin-bottom: 10px;">Finalizar Pagamento</h2>
+    <!-- Interface Dinâmica -->
+    <div id="setup" class="hidden">
+        <h2 style="font-weight: 800;">Gerar Cobrança</h2>
+        <input type="text" id="nameInput" placeholder="Nome do Cliente" 
+               style="width:100%; padding:20px; border-radius:18px; border:1px solid #333; background:#1a1a1a; color:white; margin-bottom:20px; outline:none; font-size:16px">
+        <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
+    </div>
+
+    <div id="payment" class="hidden">
+        <div class="welcome-msg" id="hi">Olá!</div>
         
-        <div class="qr-container">
-            <img src="" alt="QR Code" class="qr-code" id="qr-image">
-            <span class="nome-recebedor">Recebedor: Palhares</span>
-            <p style="margin: 12px 0 0; font-size: 12px; color: #555;">Escaneie o QR Code acima</p>
+        <div class="card">
+            <div class="qr-wrapper">
+                <img src="" alt="QR Code" class="qr-code" id="qr">
+            </div>
+            <div class="recebedor-label">Recebedor</div>
+            <div class="recebedor-nome">PALHARES</div>
         </div>
 
-        <p style="color: #888; font-size: 14px; margin-bottom: 25px;">Ou copie o código <strong>Copia e Cola</strong>:</p>
-        <button class="btn-principal" id="btnCopiar" onclick="copiarCodigo()">Copiar Código Pix</button>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Toque abaixo para copiar o código:</p>
+        <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
-    <div class="footer">POWERED BY LOCAPP</div>
+    <div class="footer">DEVELOPED BY PALHARES</div>
 </div>
 
 <script>
-    const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
-    
-    // Captura parâmetros da URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const nomeCliente = urlParams.get('nome');
+    const pixCode = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get('nome');
 
-    // Elementos das seções
-    const secGenerator = document.getElementById('section-generator');
-    const secPayment = document.getElementById('section-payment');
-
-    // LÓGICA DE EXIBIÇÃO
-    if (nomeCliente) {
-        // Mostra cartão de pagamento
-        secPayment.classList.remove('hidden');
-        document.getElementById('msgBoasVindas').innerHTML = `Olá, <span>${nomeCliente}</span>!`;
-        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
+    if (user) {
+        document.getElementById('payment').classList.remove('hidden');
+        document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
+        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
     } else {
-        // Mostra gerador
-        secGenerator.classList.remove('hidden');
+        document.getElementById('setup').classList.remove('hidden');
     }
 
-    // Função para o Gerador
-    function gerarLink() {
-        const nome = document.getElementById('input-nome').value;
-        if (!nome) { alert("Por favor, digite um nome."); return; }
-        
-        const novoLink = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(nome);
-        
-        // Copia o link gerado e avisa o usuário
-        navigator.clipboard.writeText(novoLink);
-        alert("Link gerado e copiado com sucesso para o cliente: " + nome);
-        
-        // Opcional: Redireciona para o próprio link para você ver como ficou
-        window.location.href = novoLink;
+    function createLink() {
+        const n = document.getElementById('nameInput').value;
+        if(!n) return alert("Digite o nome");
+        const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
+        navigator.clipboard.writeText(link);
+        alert("Link copiado! Envie para " + n);
+        window.location.href = link;
     }
 
-    // Função Copiar Pix
-    function copiarCodigo() {
-        navigator.clipboard.writeText(meuPix).then(() => {
-            const btn = document.getElementById('btnCopiar');
-            btn.innerText = "✓ CÓDIGO COPIADO!";
-            btn.classList.add('btn-success');
+    function copyPix() {
+        navigator.clipboard.writeText(pixCode).then(() => {
+            const b = document.getElementById('copyBtn');
+            b.innerText = "✓ PRONTO PARA COLAR";
+            b.classList.add('btn-success');
             setTimeout(() => {
-                btn.innerText = "Copiar Código Pix";
-                btn.classList.remove('btn-success');
-            }, 2500);
+                b.innerText = "Copiar Código Pix";
+                b.classList.remove('btn-success');
+            }, 3000);
         });
     }
 </script>
