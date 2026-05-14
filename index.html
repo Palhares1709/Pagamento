@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pagamento Pix - Locapp</title>
+    <title>Pagamento Pix - Palhares</title>
     <style>
         /* Impede rolagem lateral e ajusta box-model */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -14,7 +14,7 @@
         }
 
         html, body {
-            overflow-x: hidden; /* Garante que nada escape pelas laterais */
+            overflow-x: hidden;
             width: 100%;
         }
 
@@ -27,22 +27,21 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 15px; /* Espaço de segurança para não colar nas bordas */
+            padding: 15px;
         }
 
         .container { 
             text-align: center; 
             width: 100%; 
-            max-width: 360px; /* Largura ideal para a maioria dos celulares */
+            max-width: 360px;
             animation: slideUp 0.6s ease-out;
         }
 
-        .brand-logo {
-            font-size: 22px;
-            font-weight: 800;
-            color: #64D2C1;
-            margin-bottom: 5px;
-            letter-spacing: -1px;
+        /* Logomarca do Pix no topo substituindo o texto Locapp */
+        .pix-header-logo {
+            width: 80px;
+            margin-bottom: 15px;
+            filter: brightness(1.2);
         }
 
         .pix-badge {
@@ -108,19 +107,18 @@
 
         .hidden { display: none; }
 
-        /* Ajuste fino para telas muito pequenas */
         @media (max-width: 320px) {
             .qr-code { width: 140px; height: 140px; }
-            .brand-logo { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="brand-logo">LOCAPP</div>
+    <!-- Logomarca Pix substituindo o texto Locapp -->
+    <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-header-logo">
+    
     <div class="pix-badge">
-        <img src="https://logospng.org/download/pix/logo-pix-1024.png" width="14" style="filter: grayscale(1) brightness(2)">
         Pagamento Instantâneo
     </div>
 
