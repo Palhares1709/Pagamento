@@ -10,21 +10,21 @@
         .pix-logo { width: 100px; margin-bottom: 20px; filter: brightness(1.2); }
         
         .qr-container { border: 2px dashed #444; border-radius: 15px; padding: 20px; margin-bottom: 20px; background-color: #1a1a1a; }
-        .qr-code { width: 130px; height: 130px; background-color: white; padding: 8px; border-radius: 8px; }
+        .qr-code { width: 160px; height: 160px; background-color: white; padding: 8px; border-radius: 8px; }
         
-        /* Estilo para o seu nome */
         .nome-recebedor { 
             display: block;
             margin-top: 10px;
             font-size: 16px;
             font-weight: bold;
-            color: #64D2C1; /* Cor verde água para destacar */
+            color: #64D2C1; 
         }
 
         h2 { font-size: 22px; margin-bottom: 15px; }
         p { color: #bbb; font-size: 14px; margin-bottom: 20px; }
         .btn-copiar { background-color: #64D2C1; color: #121212; border: none; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .btn-copiar:active { transform: scale(0.98); }
+        .btn-success { background-color: #4CAF50; color: white; }
     </style>
 </head>
 <body>
@@ -35,23 +35,37 @@
     <h2>Realizar Pagamento</h2>
     
     <div class="qr-container">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SEU_CODIGO_PIX_AQUI" alt="QR Code" class="qr-code">
+        <!-- O ID 'qr-image' permite que o JS atualize a imagem automaticamente -->
+        <img src="" alt="QR Code" class="qr-code" id="qr-image">
         
-        <!-- Seu nome inserido aqui -->
         <span class="nome-recebedor">Recebedor: Palhares</span>
         
         <p style="margin-top: 5px; font-size: 12px; color: #888;">Aponte a câmera para o QR Code</p>
     </div>
 
     <p>Ou copie o código para o seu banco:</p>
-    <button class="btn-copiar" onclick="copiarCodigo()">Copiar Código Pix</button>
+    <button class="btn-copiar" id="btnCopiar" onclick="copiarCodigo()">Copiar Código Pix</button>
 </div>
 
 <script>
+    const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
+
+    // Gera o QR Code automaticamente ao carregar a página usando o seu código Pix real
+    document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(meuPix)}`;
+
     function copiarCodigo() {
-        const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
-        navigator.clipboard.writeText(meuPix);
-        alert("Código copiado para Palhares!");
+        navigator.clipboard.writeText(meuPix).then(() => {
+            const btn = document.getElementById('btnCopiar');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "✓ Código Copiado!";
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('btn-success');
+            }, 2000);
+        });
     }
 </script>
 
