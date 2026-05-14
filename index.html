@@ -45,23 +45,24 @@
             animation: slideUp 0.6s ease-out;
         }
 
-        /* LOGO PIX EM SVG - VETORIZADO E CENTRALIZADO */
+        /* LOGO PIX - Link oficial e estável */
         .pix-header-logo {
-            width: 75px;
+            width: 90px;
             height: auto;
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* Espaço para não encostar na badge */
+            filter: brightness(1.2);
         }
 
         .pix-badge-wrapper { 
             width: 100%; 
             display: flex; 
             justify-content: center; 
-            margin-bottom: 15px; 
+            margin-bottom: 20px; 
         }
 
         .pix-badge {
             background: rgba(255, 255, 255, 0.07);
-            padding: 5px 14px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 10px;
             color: #999;
@@ -71,7 +72,7 @@
 
         .avatar-container {
             font-size: 45px;
-            margin-bottom: -8px;
+            margin-bottom: -5px;
             display: inline-block;
             animation: itchyHand 0.4s infinite;
             filter: drop-shadow(0 0 8px rgba(100, 210, 193, 0.4));
@@ -105,14 +106,14 @@
             margin-bottom: 15px;
         }
 
-        .qr-code { width: 155px; height: 155px; display: block; }
+        .qr-code { width: 160px; height: 160px; display: block; }
         
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
-        .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; margin: 0; }
+        .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin: 0; }
 
         .btn-action { 
-            background: #64D2C1; color: #121212; border: none; padding: 17px; 
-            width: 100%; font-size: 15px; font-weight: 800; border-radius: 14px; 
+            background: #64D2C1; color: #121212; border: none; padding: 18px; 
+            width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; 
             cursor: pointer; transition: 0.2s;
             box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15);
         }
@@ -120,19 +121,16 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
 
-        .footer { margin-top: 25px; font-size: 9px; color: #444; letter-spacing: 2px; font-weight: 900; }
+        /* Assinatura profissional do desenvolvedor Francisco Palhares */
+        .footer { margin-top: 30px; font-size: 10px; color: #444; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- LOGO PIX EM SVG PURO (VETORIAL) -->
-    <svg class="pix-header-logo" viewBox="0 0 132 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M53.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z" fill="#fff"/>
-        <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
-        <path d="M25.753 23.9a10.342 10.342 0 01-3.03 7.311l-7.001 7.001a1.29 1.29 0 01-1.824 0l-7.002-7.001a10.344 10.344 0 010-14.622l7.002-7.002a1.29 1.29 0 011.824 0l7.001 7.002c1.954 1.954 3.03 4.552 3.03 7.31z" stroke="#64D2C1" stroke-width="2.581"/>
-    </svg>
+    <!-- Imagem oficial do Pix para evitar cortes e erros de desenho -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_Pix.png/640px-Logo_Pix.png" alt="Logo Pix" class="pix-header-logo">
     
     <div class="pix-badge-wrapper">
         <div class="pix-badge">Pagamento Instantâneo</div>
@@ -142,12 +140,12 @@
         <div class="card-main">
             <h2>Gerar Link</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
-            <button class="btn-action" onclick="createLink()">Copiar Link</button>
+            <button class="btn-action" onclick="createLink()">Copiar Link de Cobrança</button>
         </div>
     </div>
 
     <div id="payment" class="hidden" style="width: 100%;">
-        <div class="welcome-msg" id="hi" style="font-size: 17px; margin-bottom: 12px;">Olá!</div>
+        <div class="welcome-msg" id="hi" style="font-size: 18px; margin-bottom: 15px;">Olá!</div>
         <div class="avatar-container">🤑</div>
         <div class="card-main">
             <div class="qr-wrapper">
@@ -156,7 +154,7 @@
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
         </div>
-        <p style="color: #666; font-size: 12px; margin: 15px 0 10px;">Clique abaixo para copiar o código:</p>
+        <p style="color: #666; font-size: 13px; margin: 20px 0 15px;">Clique abaixo para copiar o código:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
@@ -171,17 +169,17 @@
     if (user) {
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
-        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixCode)}`;
+        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCode)}`;
     } else {
         document.getElementById('setup').classList.remove('hidden');
     }
 
     function createLink() {
         const n = document.getElementById('nameInput').value;
-        if(!n) return alert("Digite o nome");
+        if(!n) return alert("Por favor, digite o nome do cliente.");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link gerado e copiado para " + n);
+        alert("Link gerado e copiado! Agora você pode enviá-lo.");
         window.location.href = link;
     }
 
