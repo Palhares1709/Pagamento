@@ -2,29 +2,87 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
-        body { font-family: sans-serif; background-color: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #121212; padding: 20px; text-align: center; width: 100%; max-width: 400px; }
-        .pix-logo { width: 100px; margin-bottom: 20px; filter: brightness(1.2); }
+        /* Ajuste para ocupar a tela inteira e evitar rolagem desnecessária */
+        * { box-sizing: border-box; }
         
-        .qr-container { border: 2px dashed #444; border-radius: 15px; padding: 20px; margin-bottom: 20px; background-color: #1a1a1a; }
-        .qr-code { width: 160px; height: 160px; background-color: white; padding: 8px; border-radius: 8px; }
+        body { 
+            font-family: sans-serif; 
+            background-color: #121212; 
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 15px; /* Respiro nas bordas do celular */
+        }
+
+        .card { 
+            background: #121212; 
+            text-align: center; 
+            width: 100%; 
+            max-width: 450px; /* Um pouco mais largo para telas maiores */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .pix-logo { width: 120px; margin: 0 auto 20px; filter: brightness(1.2); }
+        
+        .qr-container { 
+            border: 2px dashed #444; 
+            border-radius: 20px; 
+            padding: 30px 20px; 
+            margin-bottom: 25px; 
+            background-color: #1a1a1a; 
+        }
+
+        .qr-code { 
+            width: 180px; /* Aumentado para facilitar a leitura no celular */
+            height: 180px; 
+            background-color: white; 
+            padding: 10px; 
+            border-radius: 12px; 
+            margin-bottom: 15px;
+        }
         
         .nome-recebedor { 
             display: block;
-            margin-top: 10px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             color: #64D2C1; 
         }
 
-        h2 { font-size: 22px; margin-bottom: 15px; }
-        p { color: #bbb; font-size: 14px; margin-bottom: 20px; }
-        .btn-copiar { background-color: #64D2C1; color: #121212; border: none; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-        .btn-copiar:active { transform: scale(0.98); }
-        .btn-success { background-color: #4CAF50; color: white; }
+        h2 { font-size: 24px; margin-top: 0; margin-bottom: 10px; }
+        p { color: #bbb; font-size: 15px; margin-bottom: 20px; }
+
+        .btn-copiar { 
+            background-color: #64D2C1; 
+            color: #121212; 
+            border: none; 
+            padding: 18px; 
+            width: 100%; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent; /* Remove o brilho ao tocar no mobile */
+        }
+        
+        .btn-copiar:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-success { background-color: #4CAF50 !important; color: white !important; }
+
+        /* Ajustes específicos para telas muito pequenas */
+        @media (max-height: 600px) {
+            .pix-logo { width: 80px; margin-bottom: 10px; }
+            .qr-container { padding: 15px; margin-bottom: 15px; }
+            .qr-code { width: 140px; height: 140px; }
+            h2 { font-size: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -35,12 +93,9 @@
     <h2>Realizar Pagamento</h2>
     
     <div class="qr-container">
-        <!-- O ID 'qr-image' permite que o JS atualize a imagem automaticamente -->
         <img src="" alt="QR Code" class="qr-code" id="qr-image">
-        
         <span class="nome-recebedor">Recebedor: Palhares</span>
-        
-        <p style="margin-top: 5px; font-size: 12px; color: #888;">Aponte a câmera para o QR Code</p>
+        <p style="margin: 10px 0 0; font-size: 13px; color: #888;">Aponte a câmera para o QR Code</p>
     </div>
 
     <p>Ou copie o código para o seu banco:</p>
@@ -50,15 +105,15 @@
 <script>
     const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
 
-    // Gera o QR Code automaticamente ao carregar a página usando o seu código Pix real
-    document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(meuPix)}`;
+    // Gera o QR Code com o código Pix
+    document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
 
     function copiarCodigo() {
         navigator.clipboard.writeText(meuPix).then(() => {
             const btn = document.getElementById('btnCopiar');
             const originalText = btn.innerText;
             
-            btn.innerText = "✓ Código Copiado!";
+            btn.innerText = "✓ Copiado!";
             btn.classList.add('btn-success');
             
             setTimeout(() => {
