@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
-        /* Reset e Configurações de Tela */
         * { box-sizing: border-box; }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
             background-color: #121212; 
             color: white; 
             display: flex; 
@@ -27,96 +26,92 @@
         }
 
         .card { 
-            background: #121212; 
             text-align: center; 
             width: 100%; 
             max-width: 420px; 
-            display: flex;
-            flex-direction: column;
         }
 
         .pix-logo { 
-            width: 110px; 
-            margin: 0 auto 25px; 
+            width: 100px; 
+            margin-bottom: 20px; 
             filter: brightness(1.2); 
         }
+
+        /* Mensagem de Boas-vindas Personalizada */
+        .welcome-msg {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #eee;
+        }
         
-        /* Container do QR Code com brilho sutil */
+        .welcome-msg span {
+            color: #64D2C1;
+            font-weight: bold;
+        }
+        
         .qr-container { 
             border: 2px dashed #333; 
-            border-radius: 24px; 
+            border-radius: 28px; 
             padding: 35px 20px; 
             margin-bottom: 25px; 
             background-color: #1a1a1a;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: 0.3s;
         }
 
         .qr-container:hover {
             border-color: #64D2C1;
-            box-shadow: 0 0 20px rgba(100, 210, 193, 0.15);
         }
 
         .qr-code { 
-            width: 190px; 
-            height: 190px; 
+            width: 200px; 
+            height: 200px; 
             background-color: white; 
             padding: 12px; 
-            border-radius: 16px; 
+            border-radius: 18px; 
             margin-bottom: 15px;
         }
         
         .nome-recebedor { 
             display: block;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #64D2C1; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        h2 { font-size: 24px; margin: 0 0 10px; font-weight: 600; }
-        p { color: #888; font-size: 15px; margin-bottom: 25px; line-height: 1.4; }
+        h2 { font-size: 22px; margin: 0 0 10px; font-weight: 600; }
+        .instrucao { color: #888; font-size: 14px; margin-bottom: 25px; }
 
-        /* Botão de Cópia */
         .btn-copiar { 
             background-color: #64D2C1; 
             color: #121212; 
             border: none; 
-            padding: 18px; 
+            padding: 20px; 
             width: 100%; 
-            font-size: 17px; 
+            font-size: 16px; 
             font-weight: bold; 
-            border-radius: 14px; 
+            border-radius: 16px; 
             cursor: pointer; 
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(100, 210, 193, 0.2);
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(100, 210, 193, 0.2);
             -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-copiar:active { transform: scale(0.97); }
+        .btn-copiar:active { transform: scale(0.96); }
         
         .btn-success { 
             background-color: #4CAF50 !important; 
             color: white !important; 
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
 
-        /* Rodapé de Marca */
         .footer {
             margin-top: 40px;
             font-size: 10px;
             color: #444;
             letter-spacing: 2px;
-            text-transform: uppercase;
             font-weight: bold;
-        }
-
-        /* Ajuste para telas pequenas/landscape */
-        @media (max-height: 650px) {
-            body { padding: 10px; }
-            .pix-logo { width: 80px; margin-bottom: 15px; }
-            .qr-container { padding: 20px 15px; margin-bottom: 15px; }
-            .qr-code { width: 150px; height: 150px; }
-            .footer { margin-top: 20px; }
         }
     </style>
 </head>
@@ -125,46 +120,56 @@
 <div class="card">
     <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-logo">
     
-    <h2>Realizar Pagamento</h2>
+    <!-- Onde o nome do cliente aparecerá -->
+    <div class="welcome-msg" id="msgBoasVindas">Olá!</div>
+
+    <h2>Finalizar Pagamento</h2>
     
     <div class="qr-container">
         <img src="" alt="QR Code" class="qr-code" id="qr-image">
         <span class="nome-recebedor">Recebedor: Palhares</span>
-        <p style="margin: 12px 0 0; font-size: 13px; color: #666;">Aponte a câmera para o código acima</p>
+        <p style="margin: 12px 0 0; font-size: 12px; color: #555;">Escaneie o QR Code acima</p>
     </div>
 
-    <p>Ou utilize o método <strong>Copia e Cola</strong> abaixo:</p>
+    <p class="instrucao">Ou clique abaixo para copiar o código <strong>Copia e Cola</strong>:</p>
     
     <button class="btn-copiar" id="btnCopiar" onclick="copiarCodigo()">Copiar Código Pix</button>
 
-    <div class="footer">Powered by Locapp</div>
+    <div class="footer">POWERED BY LOCAPP</div>
 </div>
 
 <script>
-    // Código Pix estático fornecido pelo usuário
+    // 1. Lógica para pegar o nome da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const nomeCliente = urlParams.get('nome');
+    const msgElemento = document.getElementById('msgBoasVindas');
+
+    if (nomeCliente) {
+        msgElemento.innerHTML = `Olá, <span>${nomeCliente}</span>!`;
+    } else {
+        msgElemento.innerHTML = `Olá!`;
+    }
+
+    // 2. Dados do Pix
     const meuPix = "00020126540014br.gov.bcb.pix0121fcpalharess@gmail.com0207Recarga520400005303986540530.005802BR5925FRANCISCO_DE_ASSIS_ROCHA_6007MOSSORO62290525bASV8vlwNpxUzAv6KHaRJ1CSl63047D1F";
 
-    // Gera o QR Code dinamicamente com base no código Pix acima
+    // 3. Gerar QR Code
     const qrImg = document.getElementById('qr-image');
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(meuPix)}`;
 
+    // 4. Função Copiar
     function copiarCodigo() {
         navigator.clipboard.writeText(meuPix).then(() => {
             const btn = document.getElementById('btnCopiar');
             const originalText = btn.innerText;
             
-            // Feedback visual de sucesso
-            btn.innerText = "✓ Código Copiado!";
+            btn.innerText = "✓ CÓDIGO COPIADO!";
             btn.classList.add('btn-success');
             
-            // Retorna ao estado original após 2.5 segundos
             setTimeout(() => {
                 btn.innerText = originalText;
                 btn.classList.remove('btn-success');
             }, 2500);
-        }).catch(err => {
-            console.error('Erro ao copiar: ', err);
-            alert("Não foi possível copiar automaticamente. Por favor, tente selecionar o código manualmente.");
         });
     }
 </script>
