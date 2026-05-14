@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Palhares</title>
     <style>
-        /* Reset e Base */
+        /* Reset Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         @keyframes slideUp {
@@ -36,37 +36,48 @@
             max-width: 360px;
             display: flex;
             flex-direction: column;
-            align-items: center; 
+            align-items: center; /* Garante centralização horizontal de todos os filhos */
             animation: slideUp 0.6s ease-out;
         }
 
+        /* Alinhamento da Logo */
         .pix-header-logo {
             width: 80px;
             margin-bottom: 12px;
             filter: brightness(1.2);
+            display: block; /* Garante que a logo se comporte como bloco para centralizar */
+        }
+
+        /* Correção Definitiva da Badge: Centralização Forçada */
+        .pix-badge-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
         }
 
         .pix-badge {
             background: rgba(255, 255, 255, 0.05);
             padding: 6px 16px;
             border-radius: 20px;
-            display: inline-block;
             font-size: 11px;
             color: #888;
-            margin-bottom: 25px;
             white-space: nowrap;
         }
 
-        /* Ajuste do Formulário (Setup) */
-        #setup {
+        /* Estilo do Card Principal */
+        .card-main {
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 28px;
             padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        h2 { font-size: 20px; margin: 0 0 15px; font-weight: 700; }
+        h2 { font-size: 22px; margin: 0 0 20px; font-weight: 700; color: white; }
 
         input {
             width: 100%; 
@@ -75,35 +86,18 @@
             border: 1px solid #333; 
             background: #1a1a1a; 
             color: white; 
-            margin-bottom: 15px; 
+            margin-bottom: 20px; 
             outline: none; 
             font-size: 16px;
-            text-align: center; /* Centraliza o texto dentro do campo */
-            transition: border-color 0.3s;
+            text-align: center;
+            transition: 0.3s;
         }
 
-        input:focus {
-            border-color: #64D2C1;
-        }
-
-        /* Estilo do Cartão de Pagamento */
-        #payment { width: 100%; }
+        input:focus { border-color: #64D2C1; }
 
         .welcome-msg { font-size: 18px; margin-bottom: 15px; font-weight: 300; }
         .welcome-msg b { color: #64D2C1; font-weight: 700; }
         
-        .card { 
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px; 
-            padding: 30px 20px; 
-            margin-bottom: 20px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         .qr-wrapper {
             background: white;
             padding: 12px;
@@ -115,7 +109,7 @@
         .qr-code { width: 160px; height: 160px; display: block; }
         
         .recebedor-label { font-size: 11px; color: #666; letter-spacing: 2px; margin-bottom: 4px; }
-        .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; margin: 0; }
+        .recebedor-nome { font-size: 16px; font-weight: 700; color: #64D2C1; margin-bottom: 0; }
 
         .btn-action { 
             background: #64D2C1; 
@@ -123,7 +117,7 @@
             border: none; 
             padding: 18px; 
             width: 100%; 
-            font-size: 15px; 
+            font-size: 16px; 
             font-weight: 800; 
             border-radius: 16px; 
             cursor: pointer; 
@@ -144,28 +138,30 @@
 <div class="container">
     <img src="https://logospng.org/download/pix/logo-pix-1024.png" alt="Logo Pix" class="pix-header-logo">
     
-    <div class="pix-badge">Pagamento Instantâneo</div>
+    <div class="pix-badge-wrapper">
+        <div class="pix-badge">Pagamento Instantâneo</div>
+    </div>
 
     <!-- Interface Gerador -->
-    <div id="setup" class="hidden">
-        <h2>Gerar Link</h2>
-        <input type="text" id="nameInput" placeholder="Nome do Cliente">
-        <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
+    <div id="setup" class="hidden" style="width: 100%;">
+        <div class="card-main">
+            <h2>Gerar Link</h2>
+            <input type="text" id="nameInput" placeholder="Nome do Cliente">
+            <button class="btn-action" onclick="createLink()">Copiar e Visualizar Link</button>
+        </div>
     </div>
 
     <!-- Interface Pagamento -->
-    <div id="payment" class="hidden">
+    <div id="payment" class="hidden" style="width: 100%;">
         <div class="welcome-msg" id="hi">Olá!</div>
-        
-        <div class="card">
+        <div class="card-main">
             <div class="qr-wrapper">
                 <img src="" alt="QR Code" class="qr-code" id="qr">
             </div>
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
         </div>
-
-        <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Clique abaixo para copiar o código:</p>
+        <p style="color: #666; font-size: 13px; margin: 20px 0 15px;">Clique abaixo para copiar o código:</p>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
@@ -190,7 +186,7 @@
         if(!n) return alert("Por favor, digite o nome do cliente.");
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n);
         navigator.clipboard.writeText(link);
-        alert("Link copiado com sucesso! Agora você pode enviá-lo para " + n);
+        alert("Link gerado e copiado! Agora você pode enviá-lo.");
         window.location.href = link;
     }
 
