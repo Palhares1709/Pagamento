@@ -23,6 +23,8 @@
         .qr-code { width: 160px; height: 160px; display: block; }
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
         .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin: 0; }
+        /* Estilo para a nova label da instituição */
+        .instituicao-label { font-size: 11px; color: #ffffff; margin-top: 5px; font-weight: 400; letter-spacing: 0.5px; text-align: center; }
         .btn-action { background: #64D2C1; color: #121212; border: none; padding: 18px; width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15); margin-top: 20px; }
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
@@ -65,7 +67,6 @@
 
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
-        <!-- Note que o valor em destaque (R$) foi removido daqui conforme solicitado -->
         
         <div id="timer-display">link expira em: <span id="countdown">05:00</span></div>
         <div class="avatar-money">🤑</div>
@@ -75,6 +76,7 @@
             </div>
             <div class="recebedor-label">Recebedor</div>
             <div class="recebedor-nome">PALHARES</div>
+            <div class="instituicao-label">Instituição: Caixa Econômica Federal</div>
         </div>
         <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
@@ -95,7 +97,7 @@
 
     const params = new URLSearchParams(window.location.search);
     const user = params.get('nome');
-    const valorCodificado = params.get('v'); // Pegamos 'v' em vez de 'valor'
+    const valorCodificado = params.get('v'); 
     
     let finalPixCode = ""; 
 
@@ -103,7 +105,6 @@
         document.getElementById('payment').classList.remove('hidden');
         document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         
-        // Descodificamos o valor da URL
         let valorNumerico = 0;
         if (valorCodificado) {
             try {
@@ -111,7 +112,6 @@
             } catch(e) { valorNumerico = 0; }
         }
 
-        // Gera o PIX (o valor vai estar embutido no código, o banco vai ler)
         finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
         document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
         
@@ -123,7 +123,7 @@
         document.getElementById('setup').classList.remove('hidden');
     }
 
-    function gerarPix(chave, valor, nome, cidade) {
+    function gerarPix(chave, valor, nome, city) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
         if (valor > 0) {
             const vStr = valor.toFixed(2);
@@ -131,7 +131,7 @@
         }
         payload += "5802BR";
         payload += "59" + nome.length.toString().padStart(2, '0') + nome;
-        payload += "60" + cidade.length.toString().padStart(2, '0') + cidade;
+        payload += "60" + city.length.toString().padStart(2, '0') + city;
         payload += "62070503PIX6304";
         return payload + calcularCRC16(payload);
     }
@@ -153,7 +153,6 @@
         const v = document.getElementById('valueInput').value;
         if(!n || !v) return showModal("Atenção", "Preencha o nome e o valor.", "⚠️");
         
-        // Codificamos o valor em Base64 para não aparecer "limpo" na URL
         const valorSeguro = btoa(parseFloat(v).toFixed(2));
         const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n) + "&v=" + valorSeguro;
         
