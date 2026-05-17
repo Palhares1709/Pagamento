@@ -229,16 +229,22 @@
     }
 
     // FUNÇÃO CORRIGIDA: Executa o fluxo perfeitamente e copia a mensagem
+    // FUNÇÃO CORRIGIDA: Executa o fluxo perfeitamente e copia a mensagem
     function createLink() {
-        const n = document.getElementById('nameInput').value;
-        const vRaw = document.getElementById('valueInput').value;
+        const n = document.getElementById('nameInput').value.trim();
+        const vRaw = document.getElementById('valueInput').value.trim();
         const t = document.getElementById('timeInput').value;
         
-        // Trata a vírgula do input para conversão numérica correta
+        // Se um dos campos estiver completamente vazio, já para aqui antes de quebrar o código
+        if (!n || !vRaw) {
+            return showModal("Atenção", "Preencha o nome e o valor antes de gerar.", "⚠️");
+        }
+        
+        // Trata a vírgula com segurança e converte para número decimal puro
         const v = vRaw.replace(/\./g, "").replace(",", "."); 
         
-        if(!n || !v || isNaN(v) || parseFloat(v) <= 0) {
-            return showModal("Atenção", "Preencha o nome e um valor válido.", "⚠️");
+        if(isNaN(v) || parseFloat(v) <= 0) {
+            return showModal("Atenção", "Insira um valor válido maior que zero.", "⚠️");
         }
         
         const valorFormatado = parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -261,11 +267,10 @@
             document.getElementById('valueInput').value = "";
             document.getElementById('timeInput').value = "5";
         }).catch(err => {
-            // Caso o navegador bloqueie a cópia direta por falta de permissão
+            // Caso o navegador exija permissão ou bloqueie a cópia de fundo
             showModal("Link Gerado!", "Copie o texto abaixo manualmente:", "📋", mensagemWhatsApp);
         });
     }
-
     function copyPix() {
         navigator.clipboard.writeText(finalPixCode).then(() => {
             const b = document.getElementById('copyBtn');
