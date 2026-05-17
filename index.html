@@ -34,14 +34,28 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
         
-        /* Caixas de Texto e Mensagens Específicas */
+        /* Caixas de Texto e Seleções */
         #expired-msg { display: none; flex-direction: column; align-items: center; padding: 50px 20px; }
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
-        input { width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; font-size: 16px; text-align: center; }
-        .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; }
         
-        /* Caixa de visualização da mensagem gerada */
+        input, select { 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 16px; 
+            border: 1px solid #333; 
+            background: #1a1a1a; 
+            color: white; 
+            margin-bottom: 15px; 
+            outline: none; 
+            font-size: 16px; 
+            text-align: center;
+            text-align-last: center; /* Centraliza o texto do dropdown no mobile */
+            appearance: none;       /* Remove setas padrão do sistema no select */
+        }
+        select { cursor: pointer; border-color: rgba(100, 210, 193, 0.2); }
+        
+        .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; }
         .whatsapp-preview-box { background: #142523; border: 1px dashed #64D2C1; padding: 12px; border-radius: 12px; margin-top: 15px; font-size: 12px; color: #ccc; text-align: left; white-space: pre-wrap; word-break: break-all; }
     </style>
 </head>
@@ -52,9 +66,7 @@
         <div id="modalIcon" style="font-size: 40px; margin-bottom: 10px;">✅</div>
         <h3 id="modalTitle" style="margin: 0 0 10px; color: #64D2C1;">Copiado!</h3>
         <p style="color: #aaa; font-size: 14px; margin-bottom: 10px;" id="modalText"></p>
-        
         <div id="whatsappPreview" class="whatsapp-preview-box hidden"></div>
-        
         <button class="btn-action" style="padding: 12px;" onclick="closeModal()">OK</button>
     </div>
 </div>
@@ -75,6 +87,14 @@
             <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link Protegido</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
             <input type="text" id="valueInput" inputmode="decimal" placeholder="Valor R$ 0,00" oninput="formatarMoeda(this)">
+            
+            <select id="timeInput">
+                <option value="5">⏱️ Expira em 5 Minutos</option>
+                <option value="15">⏱️ Expira em 15 Minutos</option>
+                <option value="60">⏱️ Expira em 1 Hora</option>
+                <option value="1440">⏱️ Expira em 24 Horas</option>
+            </select>
+
             <button class="btn-action" onclick="createLink()">Criar Mensagem WhatsApp</button>
         </div>
     </div>
@@ -83,7 +103,7 @@
         <div id="error-display" class="error-box">Aviso: Link inválido ou alterado!</div>
         <div id="payment-content">
             <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
-            <div id="timer-display">link expira em: <span id="countdown">05:00</span></div>
+            <div id="timer-display">link expira em: <span id="countdown">00:00</span></div>
             <div class="avatar-money">🤑</div>
             <div class="card-main">
                 <div class="qr-wrapper">
@@ -118,13 +138,16 @@
     
     let finalPixCode = ""; 
     let clienteNome = "";
+    let tempoExpiracaoMinutos = 5; // Padrão de segurança de 5 minutos caso falhe
 
     if (tokenSeguro) {
         document.getElementById('payment').classList.remove('hidden');
         try {
+            // Descompacta as 3 variáveis da URL criptografada (Nome, Valor, Tempo)
             const dadosDecodificados = atob(tokenSeguro).split('|');
             clienteNome = dadosDecodificados[0];
             let valorNumerico = parseFloat(dadosDecodificados[1]) || 0;
+            tempoExpiracaoMinutos = parseInt(dadosDecodificados[2]) || 5;
 
             if(!clienteNome || valorNumerico <= 0) throw new Error("Invalido");
 
@@ -133,6 +156,7 @@
             finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
             document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
             
+            // Controle do cronômetro baseado no tempo empacotado no token
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
             const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey; 
             const savedDeadline = localStorage.getItem(storageKey);
@@ -144,6 +168,14 @@
         }
     } else {
         document.getElementById('setup').classList.remove('hidden');
+    }
+
+    // Máscara de digitação de moeda automática regional (vírgula)
+    function formatarMoeda(campo) {
+        let valor = campo.value.replace(/\D/g, ""); 
+        if (valor === "") { campo.value = ""; return; }
+        valor = (parseFloat(valor) / 100).toFixed(2); 
+        campo.value = valor.replace(".", ","); 
     }
 
     // Algoritmo oficial de montagem do payload Pix do Banco Central
@@ -172,31 +204,30 @@
         return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
     }
 
-    // FUNÇÃO QUE DETECTA E GERA A MENSAGEM DO WHATSAPP DIRETAMENTE
+    // FUNÇÃO QUE GERA A MENSAGEM INTEGRANDO A ESCOLA DO DROPDOWN
     function createLink() {
         const n = document.getElementById('nameInput').value;
-        const v = document.getElementById('valueInput').value;
-        if(!n || !v) return showModal("Atenção", "Preencha o nome e o valor.", "⚠️");
+        const vRaw = document.getElementById('valueInput').value;
+        const t = document.getElementById('timeInput').value; // Pega o tempo do dropdown
         
-        // Formata o valor com vírgula padrão regional
+        const v = vRaw.replace(".", "").replace(",", "."); 
+        if(!n || !v || isNaN(v) || parseFloat(v) <= 0) return showModal("Atenção", "Preencha o nome e um valor válido.", "⚠️");
+        
         const valorFormatado = parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         
-        // Criptografa as informações
-        const stringUnificada = n + "|" + parseFloat(v).toFixed(2);
+        // Agora unificamos 3 itens no token protegido: Nome, Valor e Tempo escolhido
+        const stringUnificada = n + "|" + parseFloat(v).toFixed(2) + "|" + t;
         const tokenSeguroGerado = btoa(stringUnificada);
         
-        // Endereço final seguro do site do Pix
         const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
+        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro da *Locapp* está pronto. \n\n🔹 *Cliente:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
-        // Estrutura a mensagem profissional do WhatsApp com negritos e quebras de linha
-        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para PALHARES está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
-        
-        // Salva a mensagem inteira na área de transferência (Pronto para dar Ctrl+V / Colar)
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
             showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar (Ctrl + V) para enviar ao cliente.", "✅", mensagemWhatsApp);
         });
     }
 
+    // DISPARA O CRONÔMETRO QUANDO O CLIENTE COPIA O CÓDIGO PIX
     function copyPix() {
         navigator.clipboard.writeText(finalPixCode).then(() => {
             const b = document.getElementById('copyBtn');
@@ -205,15 +236,16 @@
             
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
             const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey;
+            
             if (!localStorage.getItem(storageKey)) {
-                const deadline = new Date().getTime() + (5 * 60 * 1000);
+                // Calcula o prazo final usando a variável dinâmica que veio do dropdown
+                const deadline = new Date().getTime() + (tempoExpiracaoMinutos * 60 * 1000);
                 localStorage.setItem(storageKey, deadline);
                 startExpirationLogic(deadline, storageKey);
             }
         });
     }
 
-    // Controla e exibe a mensagem de visualização no modal
     function showModal(title, msg, icon, zapText = false) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalText').innerText = msg;
@@ -226,15 +258,14 @@
         } else {
             previewEl.classList.add('hidden');
         }
-        
         document.getElementById('modalOverlay').style.display = 'flex';
     }
 
     function closeModal() {
         document.getElementById('modalOverlay').style.display = 'none';
-        // Limpa os campos após fechar para o próximo cliente
         document.getElementById('nameInput').value = "";
         document.getElementById('valueInput').value = "";
+        document.getElementById('timeInput').value = "5"; // Reseta o select para 5 min
     }
 
     function startExpirationLogic(deadline, key) {
