@@ -59,7 +59,9 @@
         select { cursor: pointer; border-color: rgba(100, 210, 193, 0.2); }
         
         .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; }
-        .whatsapp-preview-box { background: #142523; border: 1px dashed #64D2C1; padding: 12px; border-radius: 12px; margin-top: 15px; font-size: 12px; color: #ccc; text-align: left; white-space: pre-wrap; word-break: break-all; }
+        
+        /* Caixa de rascunho com seleção automática ao clicar */
+        .whatsapp-preview-box { background: #142523; border: 1px dashed #64D2C1; padding: 12px; border-radius: 12px; margin-top: 15px; font-size: 12px; color: #ccc; text-align: left; white-space: pre-wrap; word-break: break-all; cursor: pointer; }
 
         /* Histórico de Cobranças (Painel Interno) */
         .history-section { width: 100%; margin-top: 30px; text-align: left; }
@@ -79,7 +81,9 @@
         <div id="modalIcon" style="font-size: 40px; margin-bottom: 10px;">✅</div>
         <h3 id="modalTitle" style="margin: 0 0 10px; color: #64D2C1;">Copiado!</h3>
         <p style="color: #aaa; font-size: 14px; margin-bottom: 10px;" id="modalText"></p>
-        <div id="whatsappPreview" class="whatsapp-preview-box hidden"></div>
+        
+        <div id="whatsappPreview" class="whatsapp-preview-box hidden" onclick="selecionarTextoTextoarea(this)"></div>
+        
         <button class="btn-action" style="padding: 12px;" onclick="closeModal()">OK</button>
     </div>
 </div>
@@ -194,7 +198,6 @@
         renderHistory(); 
     }
 
-    // Máscara de digitação automática
     function formatarMoeda(campo) {
         let valor = campo.value.replace(/\D/g, ""); 
         if (valor === "") { campo.value = ""; return; }
@@ -202,7 +205,6 @@
         campo.value = valor.replace(".", ","); 
     }
 
-    // Montagem do Pix
     function gerarPix(chave, valor, nome, city) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
         if (valor > 0) {
@@ -228,19 +230,19 @@
         return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
     }
 
-    // FUNÇÃO CORRIGIDA: Executa o fluxo perfeitamente e copia a mensagem
-    // FUNÇÃO CORRIGIDA: Executa o fluxo perfeitamente e copia a mensagem
+    // FUNÇÃO TOTALMENTE BLINDADA: Funciona em HTTP e HTTPS
     function createLink() {
-        const n = document.getElementById('nameInput').value.trim();
-        const vRaw = document.getElementById('valueInput').value.trim();
+        const nameEl = document.getElementById('nameInput');
+        const valueEl = document.getElementById('valueInput');
+        
+        const n = nameEl.value.trim();
+        const vRaw = valueEl.value.trim();
         const t = document.getElementById('timeInput').value;
         
-        // Se um dos campos estiver completamente vazio, já para aqui antes de quebrar o código
         if (!n || !vRaw) {
             return showModal("Atenção", "Preencha o nome e o valor antes de gerar.", "⚠️");
         }
         
-        // Trata a vírgula com segurança e converte para número decimal puro
         const v = vRaw.replace(/\./g, "").replace(",", "."); 
         
         if(isNaN(v) || parseFloat(v) <= 0) {
@@ -254,40 +256,65 @@
         const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
         const mensagemWhatsApp = `Olá! Seu link de pagamento seguro da *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
-        // Grava no histórico local
         saveToHistory(n, valorFormatado, mensagemWhatsApp);
 
-        // Copia automaticamente para a memória do celular/PC
-        navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
-            showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar para o seu cliente.", "✅", mensagemWhatsApp);
-            renderHistory(); 
-            
-            // Limpa os campos da tela de criação para o próximo cliente
-            document.getElementById('nameInput').value = "";
-            document.getElementById('valueInput').value = "";
-            document.getElementById('timeInput').value = "5";
-        }).catch(err => {
-            // Caso o navegador exija permissão ou bloqueie a cópia de fundo
-            showModal("Link Gerado!", "Copie o texto abaixo manualmente:", "📋", mensagemWhatsApp);
-        });
+        // Tenta a cópia em background (SÓ FUNCIONA EM HTTPS)
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
+                showModal("Mensagem Copiada!", "O texto já foi copiado automaticamente. É só colar no WhatsApp do seu cliente.", "✅", mensagemWhatsApp);
+                limparFormulario();
+            }).catch(() => {
+                // Se der erro mesmo em HTTPS, joga para o plano B
+                abrirPlanoB(mensagemWhatsApp);
+            });
+        } else {
+            // Se estiver em ambiente HTTP comum, vai direto para o plano B (Manual Sem Travar)
+            abrirPlanoB(mensagemWhatsApp);
+        }
     }
+
+    // Abre a janela com o rascunho destacado para cópia manual segura
+    function abrirPlanoB(texto) {
+        showModal("Link Gerado!", "Seu navegador bloqueou a cópia automática. Toque no texto verde abaixo para selecionar e copie:", "📋", texto);
+        limparFormulario();
+    }
+
+    function limparFormulario() {
+        document.getElementById('nameInput').value = "";
+        document.getElementById('valueInput').value = "";
+        document.getElementById('timeInput').value = "5";
+        renderHistory();
+    }
+
     function copyPix() {
-        navigator.clipboard.writeText(finalPixCode).then(() => {
-            const b = document.getElementById('copyBtn');
-            b.innerText = "✓ CÓDIGO COPIADO";
-            b.classList.add('btn-success');
-            
-            document.getElementById('comprovanteBtn').classList.remove('hidden');
-            
-            const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
-            const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey;
-            
-            if (!localStorage.getItem(storageKey)) {
-                const deadline = new Date().getTime() + (tempoExpiracaoMinutos * 60 * 1000);
-                localStorage.setItem(storageKey, deadline);
-                startExpirationLogic(deadline, storageKey);
-            }
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(finalPixCode).then(() => finalizarCopiaPix());
+        } else {
+            // Alternativa para navegadores antigos ou sem HTTPS copiarem o código pix
+            const aux = document.createElement("input");
+            aux.setAttribute("value", finalPixCode);
+            document.body.appendChild(aux);
+            aux.select();
+            document.execCommand("copy");
+            document.body.removeChild(aux);
+            finalizarCopiaPix();
+        }
+    }
+
+    function finalizarCopiaPix() {
+        const b = document.getElementById('copyBtn');
+        b.innerText = "✓ CÓDIGO COPIADO";
+        b.classList.add('btn-success');
+        document.getElementById('comprovanteBtn').classList.remove('hidden');
+        
+        const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
+        const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey;
+        
+        if (!localStorage.getItem(storageKey)) {
+            const deadline = new Date().getTime() + (tempoExpiracaoMinutos * 60 * 1000);
+            localStorage.setItem(storageKey, deadline);
+            startExpirationLogic(deadline, storageKey);
+        }
     }
 
     function saveToHistory(nome, valor, mensagemComplete) {
@@ -322,9 +349,22 @@
 
     function copyFromHistory(base64Msg) {
         const msgDecoded = atob(base64Msg);
-        navigator.clipboard.writeText(msgDecoded).then(() => {
-            showModal("Mensagem Recopiada!", "O texto de cobrança antiga foi copiado para a sua área de transferência.", "✅", msgDecoded);
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(msgDecoded).then(() => {
+                showModal("Mensagem Recopiada!", "O texto de cobrança antiga foi copiado para a sua área de transferência.", "✅", msgDecoded);
+            }).catch(() => abrirPlanoB(msgDecoded));
+        } else {
+            abrirPlanoB(msgDecoded);
+        }
+    }
+
+    // Seleção rápida de texto ao tocar na caixa verde (Facilita muito no celular)
+    function selecionarTextoTextoarea(el) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
     }
 
     function showModal(title, msg, icon, zapText = false) {
@@ -341,6 +381,10 @@
         }
         document.getElementById('modalOverlay').style.display = 'flex';
     }
+
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if(e.target === this) closeModal();
+    });
 
     function closeModal() {
         document.getElementById('modalOverlay').style.display = 'none';
