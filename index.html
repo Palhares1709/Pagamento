@@ -103,19 +103,16 @@
 </div>
 
 <script>
-    // Configurações bancárias fixas
     const CHAVE_PIX = "+5584991339061";
     const NOME_RECEBEDOR = "FRANCISCO DE ASSIS ROCHA";
     const CIDADE_RECEBEDOR = "MOSSORO";
 
-    // Captura o parâmetro criptografado "p" da URL
     const params = new URLSearchParams(window.location.search);
     const tokenSeguro = params.get('p'); 
     
     let finalPixCode = ""; 
     let clienteNome = "";
 
-    // SE TIVER TOKEN, ABRE A TELA DO CLIENTE
     if (tokenSeguro) {
         document.getElementById('payment').classList.remove('hidden');
         try {
@@ -127,6 +124,7 @@
 
             document.getElementById('hi').innerHTML = `Olá, <b>${clienteNome}</b>!`;
             
+            // AJUSTE CRUCIAL: Força a geração do Pix a receber o valor sempre com duas casas decimais fixas (.toFixed(2))
             finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
             document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
             
@@ -140,15 +138,15 @@
             document.getElementById('error-display').style.display = 'block';
         }
     } else {
-        // SE NÃO TIVER TOKEN, ABRE O GERADOR INTERNO
         document.getElementById('setup').classList.remove('hidden');
     }
 
-    // Algoritmo oficial do Pix do Banco Central
+    // AJUSTE VISANDO O PADRÃO EMV (BANCO CENTRAL DO BRASIL)
     function gerarPix(chave, valor, nome, city) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
         if (valor > 0) {
-            const vStr = valor.toFixed(2);
+            // Garante o formato estrito de string exigido pela API de leitura dos bancos (Ex: 150.00)
+            const vStr = parseFloat(valor).toFixed(2);
             payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
         }
         payload += "5802BR";
@@ -170,22 +168,18 @@
         return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
     }
 
-    // FUNÇÃO DE CRIAÇÃO DO LINK E DA MENSAGEM DO WHATSAPP (A QUE ESTAVA FUNCIONANDO)
     function createLink() {
         const n = document.getElementById('nameInput').value;
         const v = document.getElementById('valueInput').value;
         if(!n || !v) return showModal("Atenção", "Preencha o nome e o valor.", "⚠️");
         
         const valorFormatado = parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        
-        // Criptografa Nome e Valor juntos
         const stringUnificada = n + "|" + parseFloat(v).toFixed(2);
         const tokenSeguroGerado = btoa(stringUnificada);
         
         const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
-        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro da *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
+        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
-        // Copia direto para a memória do celular/computador
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
             showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar para o seu cliente.", "✅");
             document.getElementById('nameInput').value = "";
@@ -193,7 +187,6 @@
         });
     }
 
-    // Cópia do Código Pix Copia e Cola pelo cliente
     function copyPix() {
         navigator.clipboard.writeText(finalPixCode).then(() => {
             const b = document.getElementById('copyBtn');
@@ -210,7 +203,6 @@
         });
     }
 
-    // Controle dos Modais
     function showModal(title, msg, icon) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalText').innerText = msg;
@@ -222,7 +214,6 @@
         document.getElementById('modalOverlay').style.display = 'none';
     }
 
-    // Lógica do cronômetro de 5 minutos
     function startExpirationLogic(deadline, key) {
         const timerDisplay = document.getElementById('timer-display');
         timerDisplay.style.display = 'inline-block';
