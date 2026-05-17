@@ -74,7 +74,7 @@
         <div class="card-main">
             <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link Protegido</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
-            <input type="number" id="valueInput" step="0.01" inputmode="decimal" placeholder="Valor R$ (Ex: 150.00)">
+            <input type="text" id="valueInput" inputmode="decimal" placeholder="Valor R$ 0,00" oninput="formatarMoeda(this)">
             <button class="btn-action" onclick="createLink()">Criar Mensagem WhatsApp</button>
         </div>
     </div>
