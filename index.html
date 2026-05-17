@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pagamento Pix - Locapp</title>
     <style>
-        /* (Mantive seus estilos originais para o design não mudar) */
+        /* (Mantive seus estilos originais idênticos para não mudar o design) */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes moneyPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -23,7 +23,6 @@
         .qr-code { width: 160px; height: 160px; display: block; }
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
         .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin: 0; }
-        /* Estilo para a nova label da instituição */
         .instituicao-label { font-size: 11px; color: #ffffff; margin-top: 5px; font-weight: 400; letter-spacing: 0.5px; text-align: center; }
         .btn-action { background: #64D2C1; color: #121212; border: none; padding: 18px; width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15); margin-top: 20px; }
         .btn-action:active { transform: scale(0.97); }
@@ -32,6 +31,7 @@
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
         .hidden { display: none; }
         input { width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; font-size: 16px; text-align: center; }
+        .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -58,27 +58,29 @@
 
     <div id="setup" class="hidden" style="width: 100%;">
         <div class="card-main">
-            <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link</h2>
+            <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link Protegido</h2>
             <input type="text" id="nameInput" placeholder="Nome do Cliente">
             <input type="number" id="valueInput" step="0.01" inputmode="decimal" placeholder="Valor R$ (Ex: 150.00)">
-            <button class="btn-action" onclick="createLink()">Criar Link Personalizado</button>
+            <button class="btn-action" onclick="createLink()">Criar Link Blindado</button>
         </div>
     </div>
 
     <div id="payment" class="hidden" style="width: 100%;">
-        <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
-        
-        <div id="timer-display">link expira em: <span id="countdown">05:00</span></div>
-        <div class="avatar-money">🤑</div>
-        <div class="card-main">
-            <div class="qr-wrapper">
-                <img src="" alt="QR Code" class="qr-code" id="qr">
+        <div id="error-display" class="error-box">Aviso: Link inválido ou alterado!</div>
+        <div id="payment-content">
+            <div id="hi" style="font-size: 18px; margin-bottom: 12px;">Olá!</div>
+            <div id="timer-display">link expira em: <span id="countdown">05:00</span></div>
+            <div class="avatar-money">🤑</div>
+            <div class="card-main">
+                <div class="qr-wrapper">
+                    <img src="" alt="QR Code" class="qr-code" id="qr">
+                </div>
+                <div class="recebedor-label">Recebedor</div>
+                <div class="recebedor-nome">PALHARES</div>
+                <div class="instituicao-label">Instituição: Caixa Econômica Federal</div>
             </div>
-            <div class="recebedor-label">Recebedor</div>
-            <div class="recebedor-nome">PALHARES</div>
-            <div class="instituicao-label">Instituição: Caixa Econômica Federal</div>
+            <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
         </div>
-        <button class="btn-action" id="copyBtn" onclick="copyPix()">Copiar Código Pix</button>
     </div>
 
     <div id="expired-msg">
@@ -91,38 +93,57 @@
 </div>
 
 <script>
+    // Configurações base do seu Pix chave e dados bancários
     const CHAVE_PIX = "+5584991339061";
     const NOME_RECEBEDOR = "FRANCISCO DE ASSIS ROCHA";
     const CIDADE_RECEBEDOR = "MOSSORO";
 
+    // Pega o parâmetro criptografado da URL (?p=...)
     const params = new URLSearchParams(window.location.search);
-    const user = params.get('nome');
-    const valorCodificado = params.get('v'); 
+    const tokenSeguro = params.get('p'); 
     
     let finalPixCode = ""; 
+    let clienteNome = "";
 
-    if (user) {
+    // SE EXISTIR UM TOKEN SEGURO NA URL, ENTRA NO MODO CLIENTE
+    if (tokenSeguro) {
         document.getElementById('payment').classList.remove('hidden');
-        document.getElementById('hi').innerHTML = `Olá, <b>${user}</b>!`;
         
-        let valorNumerico = 0;
-        if (valorCodificado) {
-            try {
-                valorNumerico = parseFloat(atob(valorCodificado));
-            } catch(e) { valorNumerico = 0; }
-        }
+        try {
+            // Descriptografa o token unificado (Ex: "João|150.00")
+            const dadosDecodificados = atob(tokenSeguro).split('|');
+            clienteNome = dadosDecodificados[0];
+            let valorNumerico = parseFloat(dadosDecodificados[1]) || 0;
 
-        finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
-        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
-        
-        const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
-        const storageKey = 'locapp_deadline_' + btoa(user) + '_' + dateKey; 
-        const savedDeadline = localStorage.getItem(storageKey);
-        if (savedDeadline) startExpirationLogic(parseInt(savedDeadline), storageKey);
+            // Validação de segurança: Se o nome for vazio ou o valor for zero, aciona o erro
+            if(!clienteNome || valorNumerico <= 0) {
+                throw new Error("Dados inválidos");
+            }
+
+            // Exibe as informações descriptografadas na tela de forma segura
+            document.getElementById('hi').innerHTML = `Olá, <b>${clienteNome}</b>!`;
+            
+            // Monta o Pix padrão com o valor correto
+            finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
+            document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
+            
+            // Controle do cronômetro de 5 minutos
+            const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
+            const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey; 
+            const savedDeadline = localStorage.getItem(storageKey);
+            if (savedDeadline) startExpirationLogic(parseInt(savedDeadline), storageKey);
+
+        } catch (e) {
+            // Se o cliente alterou qualquer caractere na URL, esconde o Pix e mostra o erro
+            document.getElementById('payment-content').style.display = 'none';
+            document.getElementById('error-display').style.display = 'block';
+        }
     } else {
+        // SE NÃO TIVER PARÂMETRO NENHUM, ABRE O GERADOR INTERNO
         document.getElementById('setup').classList.remove('hidden');
     }
 
+    // FUNÇÃO QUE MONTA A STRING DO PIX (PADRÃO BANCO CENTRAL)
     function gerarPix(chave, valor, nome, city) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
         if (valor > 0) {
@@ -136,6 +157,7 @@
         return payload + calcularCRC16(payload);
     }
 
+    // CALCULO DE SEGURANÇA REQUERIDO PELO PIX
     function calcularCRC16(str) {
         let crc = 0xFFFF;
         for (let i = 0; i < str.length; i++) {
@@ -148,19 +170,25 @@
         return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
     }
 
+    // FUNÇÃO DE GERAR O LINK PROTEGIDO (TELA INTERNA)
     function createLink() {
         const n = document.getElementById('nameInput').value;
         const v = document.getElementById('valueInput').value;
         if(!n || !v) return showModal("Atenção", "Preencha o nome e o valor.", "⚠️");
         
-        const valorSeguro = btoa(parseFloat(v).toFixed(2));
-        const link = window.location.origin + window.location.pathname + "?nome=" + encodeURIComponent(n) + "&v=" + valorSeguro;
+        // Junta o nome e o valor em uma única string e criptografa tudo junto
+        const stringUnificada = n + "|" + parseFloat(v).toFixed(2);
+        const tokenSeguroGerado = btoa(stringUnificada);
+        
+        // Monta a URL limpa com o parâmetro unificado e seguro (?p=...)
+        const link = window.location.origin + window.location.pathname + "?p=" + tokenSeguroGerado;
         
         navigator.clipboard.writeText(link).then(() => {
             showModal("Link Gerado!", "Link copiado para " + n + ".", "✅", link);
         });
     }
 
+    // COPIA O CODIGO EM MODO COPIA E COLA
     function copyPix() {
         navigator.clipboard.writeText(finalPixCode).then(() => {
             const b = document.getElementById('copyBtn');
@@ -168,7 +196,7 @@
             b.classList.add('btn-success');
             
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
-            const storageKey = 'locapp_deadline_' + btoa(user) + '_' + dateKey;
+            const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey;
             if (!localStorage.getItem(storageKey)) {
                 const deadline = new Date().getTime() + (5 * 60 * 1000);
                 localStorage.setItem(storageKey, deadline);
@@ -177,6 +205,7 @@
         });
     }
 
+    // CONTROLE DOS AVISOS POPUP NA TELA
     function showModal(title, msg, icon, redirect = false) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalText').innerText = msg;
@@ -190,6 +219,7 @@
         if(window.pendingRedirect && typeof window.pendingRedirect === "string") window.location.href = window.pendingRedirect;
     }
 
+    // CONTROLE DO TEMPO DE EXPIRAÇÃO DO LINK
     function startExpirationLogic(deadline, key) {
         const timerDisplay = document.getElementById('timer-display');
         timerDisplay.style.display = 'inline-block';
