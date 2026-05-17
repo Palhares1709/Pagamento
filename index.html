@@ -189,7 +189,7 @@
         const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
         
         // Estrutura a mensagem profissional do WhatsApp com negritos e quebras de linha
-        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro da *Locapp* está pronto. \n\n🔹 *Cliente:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
+        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para PALHARES está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
         // Salva a mensagem inteira na área de transferência (Pronto para dar Ctrl+V / Colar)
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
