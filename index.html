@@ -220,7 +220,7 @@
         const tokenSeguroGerado = btoa(stringUnificada);
         
         const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
-        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro da *Locapp* está pronto. \n\n🔹 *Cliente:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
+        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
             showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar (Ctrl + V) para enviar ao cliente.", "✅", mensagemWhatsApp);
