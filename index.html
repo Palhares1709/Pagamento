@@ -34,7 +34,7 @@
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
         
-        /* BOTÃO DE ENVIAR COMPROVANTE (Aparece para o cliente) */
+        /* Botão de Enviar Comprovante do Cliente */
         .btn-comprovante { background: #25D366; color: white; border: none; padding: 15px; width: 100%; font-size: 14px; font-weight: 700; border-radius: 16px; cursor: pointer; transition: 0.2s; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 6px 12px rgba(37, 211, 102, 0.15); }
         
         /* Caixas de Texto, Seleções e Tabelas */
@@ -61,7 +61,7 @@
         .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; }
         .whatsapp-preview-box { background: #142523; border: 1px dashed #64D2C1; padding: 12px; border-radius: 12px; margin-top: 15px; font-size: 12px; color: #ccc; text-align: left; white-space: pre-wrap; word-break: break-all; }
 
-        /* HISTÓRICO DE COBRANÇAS (Visível apenas no seu painel gerador) */
+        /* Histórico de Cobranças (Painel Interno) */
         .history-section { width: 100%; margin-top: 30px; text-align: left; }
         .history-title { font-size: 14px; color: #64D2C1; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 800; }
         .history-list { display: flex; flex-direction: column; gap: 10px; }
@@ -150,12 +150,10 @@
 </div>
 
 <script>
-    // Configurações da sua conta Pix
     const CHAVE_PIX = "+5584991339061";
     const NOME_RECEBEDOR = "FRANCISCO DE ASSIS ROCHA";
     const CIDADE_RECEBEDOR = "MOSSORO";
 
-    // Pega o token seguro da URL
     const params = new URLSearchParams(window.location.search);
     const tokenSeguro = params.get('p'); 
     
@@ -163,7 +161,6 @@
     let clienteNome = "";
     let tempoExpiracaoMinutos = 5;
 
-    // DECIDE QUAL TELA CARREGAR
     if (tokenSeguro) {
         document.getElementById('payment').classList.remove('hidden');
         try {
@@ -179,12 +176,10 @@
             finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
             document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
             
-            // Texto pré-definido para quando ele clicar no botão verde do comprovante
             const valorMonetario = valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const textoComprovante = encodeURIComponent(`Olá! Realizei o pagamento Pix de ${valorMonetario}. Segue o comprovante em anexo.`);
             document.getElementById('comprovanteBtn').href = `https://wa.me/5584991339061?text=${textoComprovante}`;
 
-            // Controle do tempo de expiração
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
             const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey; 
             const savedDeadline = localStorage.getItem(storageKey);
@@ -196,10 +191,10 @@
         }
     } else {
         document.getElementById('setup').classList.remove('hidden');
-        renderHistory(); // Renderiza o histórico de cobranças na sua tela
+        renderHistory(); 
     }
 
-    // Máscara de digitação automática por teclado
+    // Máscara de digitação automática
     function formatarMoeda(campo) {
         let valor = campo.value.replace(/\D/g, ""); 
         if (valor === "") { campo.value = ""; return; }
@@ -207,7 +202,7 @@
         campo.value = valor.replace(".", ","); 
     }
 
-    // Geração do Payload do Banco Central
+    // Montagem do Pix
     function gerarPix(chave, valor, nome, city) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
         if (valor > 0) {
@@ -233,39 +228,50 @@
         return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
     }
 
-    // Cria a mensagem criptografada e grava no histórico local
+    // FUNÇÃO CORRIGIDA: Executa o fluxo perfeitamente e copia a mensagem
     function createLink() {
         const n = document.getElementById('nameInput').value;
         const vRaw = document.getElementById('valueInput').value;
         const t = document.getElementById('timeInput').value;
         
-        const v = vRaw.replace(".", "").replace(",", "."); 
-        if(!n || !v || isNaN(v) || parseFloat(v) <= 0) return showModal("Atenção", "Preencha o nome e um valor válido.", "⚠️");
+        // Trata a vírgula do input para conversão numérica correta
+        const v = vRaw.replace(/\./g, "").replace(",", "."); 
+        
+        if(!n || !v || isNaN(v) || parseFloat(v) <= 0) {
+            return showModal("Atenção", "Preencha o nome e um valor válido.", "⚠️");
+        }
         
         const valorFormatado = parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const stringUnificada = n + "|" + parseFloat(v).toFixed(2) + "|" + t;
         const tokenSeguroGerado = btoa(stringUnificada);
         
         const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
-        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
+        const mensagemWhatsApp = `Olá! Seu link de pagamento seguro da *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
-        // Salva essa cobrança no histórico interno do seu celular/PC
+        // Grava no histórico local
         saveToHistory(n, valorFormatado, mensagemWhatsApp);
 
+        // Copia automaticamente para a memória do celular/PC
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
-            showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar (Ctrl + V) para enviar ao cliente.", "✅", mensagemWhatsApp);
+            showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar para o seu cliente.", "✅", mensagemWhatsApp);
             renderHistory(); 
+            
+            // Limpa os campos da tela de criação para o próximo cliente
+            document.getElementById('nameInput').value = "";
+            document.getElementById('valueInput').value = "";
+            document.getElementById('timeInput').value = "5";
+        }).catch(err => {
+            // Caso o navegador bloqueie a cópia direta por falta de permissão
+            showModal("Link Gerado!", "Copie o texto abaixo manualmente:", "📋", mensagemWhatsApp);
         });
     }
 
-    // Ação de cópia do cliente
     function copyPix() {
         navigator.clipboard.writeText(finalPixCode).then(() => {
             const b = document.getElementById('copyBtn');
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
             
-            // Faz surgir o botão verde após o cliente copiar o código
             document.getElementById('comprovanteBtn').classList.remove('hidden');
             
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
@@ -279,7 +285,6 @@
         });
     }
 
-    // FUNÇÕES DE GERENCIAMENTO DO HISTÓRICO LOCAL (SALVA ATÉ 5 ITENS)
     function saveToHistory(nome, valor, mensagemComplete) {
         let history = JSON.parse(localStorage.getItem('locapp_history')) || [];
         history.unshift({ nome, valor, msg: btoa(mensagemComplete) });
@@ -317,7 +322,6 @@
         });
     }
 
-    // Modais e Popups de aviso
     function showModal(title, msg, icon, zapText = false) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalText').innerText = msg;
@@ -335,12 +339,8 @@
 
     function closeModal() {
         document.getElementById('modalOverlay').style.display = 'none';
-        document.getElementById('nameInput').value = "";
-        document.getElementById('valueInput').value = "";
-        document.getElementById('timeInput').value = "5";
     }
 
-    // Regra do Cronômetro regressivo
     function startExpirationLogic(deadline, key) {
         const timerDisplay = document.getElementById('timer-display');
         timerDisplay.style.display = 'inline-block';
