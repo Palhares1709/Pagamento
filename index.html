@@ -35,13 +35,14 @@
         .btn-action { background: #64D2C1; color: #121212; border: none; padding: 18px; width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15); margin-top: 20px; }
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; margin-top: 10px; box-shadow: none; }
         
         /* Caixas de Entrada de Texto */
         #expired-msg { display: none; flex-direction: column; align-items: center; padding: 50px 20px; }
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         input { width: 100%; padding: 18px; border-radius: 16px; border: 1px solid #333; background: #1a1a1a; color: white; margin-bottom: 15px; outline: none; font-size: 16px; text-align: center; }
-        .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; }
+        .error-box { color: #ff5252; background: rgba(255,82,82,0.1); border: 1px solid #ff5252; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: 600; width: 100%; text-align: center; }
     </style>
 </head>
 <body>
@@ -66,6 +67,29 @@
     
     <div class="pix-badge">Pagamento Instantâneo</div>
 
+    <!-- TELA DE AUTENTICAÇÃO (NOVA) -->
+    <div id="auth-screen" class="hidden" style="width: 100%;">
+        <div class="card-main">
+            <h2 id="auth-title" style="margin: 0 0 15px; font-size: 20px;">Acesso Restrito</h2>
+            <div id="auth-error" class="error-box"></div>
+            
+            <!-- Etapa 1: Inserir E-mail -->
+            <div id="step-email">
+                <input type="email" id="authEmail" placeholder="Seu e-mail cadastrado">
+                <button class="btn-action" id="btnSendCode" onclick="solicitarCodigo()">Enviar Código</button>
+            </div>
+
+            <!-- Etapa 2: Inserir Token (Invisível no início) -->
+            <div id="step-code" class="hidden" style="width: 100%;">
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Digite o código de 6 dígitos enviado para o seu e-mail.</p>
+                <input type="text" id="authCode" placeholder="Código de 6 dígitos" maxlength="6" inputmode="numeric">
+                <button class="btn-action" id="btnVerifyCode" onclick="verificarCodigo()">Verificar Código</button>
+                <button class="btn-action btn-secondary" onclick="voltarParaEmail()">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA DE SETUP (GERAR LINK) -->
     <div id="setup" class="hidden" style="width: 100%;">
         <div class="card-main">
             <h2 style="margin: 0 0 15px; font-size: 20px;">Gerar Link Protegido</h2>
@@ -75,6 +99,7 @@
         </div>
     </div>
 
+    <!-- TELA DE PAGAMENTO (CLIENTE) -->
     <div id="payment" class="hidden" style="width: 100%;">
         <div id="error-display" class="error-box">Aviso: Link inválido ou alterado!</div>
         <div id="payment-content">
@@ -103,6 +128,9 @@
 </div>
 
 <script>
+    // URL do seu Web App implantado no Google Apps Script
+    const WEB_APP_URL = "SEU_LINK_DO_GOOGLE_APPS_SCRIPT_AQUI";
+
     const CHAVE_PIX = "+5584991339061";
     const NOME_RECEBEDOR = "FRANCISCO DE ASSIS ROCHA";
     const CIDADE_RECEBEDOR = "MOSSORO";
@@ -113,7 +141,9 @@
     let finalPixCode = ""; 
     let clienteNome = "";
 
+    // Inicialização da Página
     if (tokenSeguro) {
+        // Se tem parâmetro '?p=', é o cliente tentando pagar. Abre direto sem login.
         document.getElementById('payment').classList.remove('hidden');
         try {
             const dadosDecodificados = atob(tokenSeguro).split('|');
@@ -124,7 +154,6 @@
 
             document.getElementById('hi').innerHTML = `Olá, <b>${clienteNome}</b>!`;
             
-            // AJUSTE CRUCIAL: Força a geração do Pix a receber o valor sempre com duas casas decimais fixas (.toFixed(2))
             finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
             document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
             
@@ -138,14 +167,96 @@
             document.getElementById('error-display').style.display = 'block';
         }
     } else {
-        document.getElementById('setup').classList.remove('hidden');
+        // Se NÃO tem parâmetro, é alguém tentando acessar o gerador. Exige a tela de Login!
+        document.getElementById('auth-screen').classList.remove('hidden');
     }
 
-    // AJUSTE VISANDO O PADRÃO EMV (BANCO CENTRAL DO BRASIL)
+    /* ==========================================
+       LÓGICA DE AUTENTICAÇÃO (SISTEMA DE TOKEN)
+       ========================================== */
+    function solicitarCodigo() {
+        const email = document.getElementById('authEmail').value.trim();
+        const errBox = document.getElementById('auth-error');
+        const btn = document.getElementById('btnSendCode');
+        
+        errBox.style.display = 'none';
+        if(!email) return exibirErroAuth("Por favor, informe seu e-mail.");
+
+        btn.innerText = "Enviando...";
+        btn.disabled = true;
+
+        fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors", // Evita problemas de CORS clássicos no Apps Script
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `action=sendCode&email=${encodeURIComponent(email)}`
+        })
+        .then(() => {
+            // Como usamos no-cors, o JS não lê a resposta de sucesso diretamente, 
+            // então assumimos o envio e alternamos a tela.
+            document.getElementById('step-email').classList.add('hidden');
+            document.getElementById('step-code').classList.remove('hidden');
+            document.getElementById('auth-title').innerText = "Confirme o Código";
+        })
+        .catch(err => {
+            exibirErroAuth("Erro ao conectar com o servidor.");
+            btn.innerText = "Enviar Código";
+            btn.disabled = false;
+        });
+    }
+
+    function verificarCodigo() {
+        const email = document.getElementById('authEmail').value.trim();
+        const code = document.getElementById('authCode').value.trim();
+        const btn = document.getElementById('btnVerifyCode');
+        
+        if(!code || code.length < 6) return exibirErroAuth("Digite o código de 6 dígitos.");
+
+        btn.innerText = "Verificando...";
+        btn.disabled = true;
+
+        // Para validação do código recebendo retorno de sucesso/erro, fazemos um fetch GET simulado ou via JSONP
+        // Mas a forma mais limpa com Apps Script é usar uma requisição GET padrão para validação:
+        fetch(`${WEB_APP_URL}?action=verifyCode&email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`)
+        .then(res => res.json())
+        .then(res => {
+            if(res.success) {
+                // Sucesso! Esconde tela de login e abre o painel gerador de Pix
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('setup').classList.remove('hidden');
+            } else {
+                exibirErroAuth(res.message || "Código inválido ou expirado.");
+                btn.innerText = "Verificar Código";
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            exibirErroAuth("Erro na validação. Tente novamente.");
+            btn.innerText = "Verificar Código";
+            btn.disabled = false;
+        });
+    }
+
+    function voltarParaEmail() {
+        document.getElementById('step-code').classList.add('hidden');
+        document.getElementById('step-email').classList.remove('hidden');
+        document.getElementById('auth-title').innerText = "Acesso Restrito";
+        document.getElementById('btnSendCode').innerText = "Enviar Código";
+        document.getElementById('btnSendCode').disabled = false;
+    }
+
+    function exibirErroAuth(msg) {
+        const errBox = document.getElementById('auth-error');
+        errBox.innerText = msg;
+        errBox.style.display = 'block';
+    }
+
+    /* ==========================================
+       LÓGICA ORIGINAL DO PIX (MANTIDA)
+       ========================================== */
     function gerarPix(chave, valor, nome, city) {
         let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
         if (valor > 0) {
-            // Garante o formato estrito de string exigido pela API de leitura dos bancos (Ex: 150.00)
             const vStr = parseFloat(valor).toFixed(2);
             payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
         }
@@ -177,7 +288,7 @@
         const stringUnificada = n + "|" + parseFloat(v).toFixed(2);
         const tokenSeguroGerado = btoa(stringUnificada);
         
-        const urlFinal = "https://pix.apploc.com.br/?p=" + tokenSeguroGerado;
+        const urlFinal = window.location.origin + window.location.pathname + "?p=" + tokenSeguroGerado;
         const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
         
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
