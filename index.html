@@ -255,9 +255,22 @@
        LÓGICA ORIGINAL DO PIX (MANTIDA)
        ========================================== */
     function gerarPix(chave, valor, nome, city) {
-    // 1. Monta o bloco específico do recebedor (Chave Pix)
-    const tamChave = chave.length.toString().padStart(2, '0');
-    const bbcbPix = "0014br.gov.bcb.pix01" + tamChave + chave;
+    // Função auxiliar para remover acentos e caracteres especiais estranhos aos bancos
+    const limparTexto = (txt) => {
+        return txt.normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+                  .toUpperCase()
+                  .replace(/[^A-Z0-9 ]/g, "")    // Mantém apenas letras, números e espaços
+                  .trim();
+    };
+
+    const nomeLimpo = limparTexto(nome);
+    const cidadeLimpa = limparTexto(city);
+    const chaveLimpa = chave.replace(/\s+/g, ''); // Remove espaços da chave se houver
+
+    // 1. Monta o bloco específico da Chave Pix
+    const tamChave = chaveLimpa.length.toString().padStart(2, '0');
+    const bbcbPix = "0014br.gov.bcb.pix01" + tamChave + chaveLimpa;
     
     // 2. Monta o bloco do ID do comerciante (Merchant Account Info)
     const merchantInfo = "26" + bbcbPix.length.toString().padStart(2, '0') + bbcbPix;
@@ -265,16 +278,16 @@
     // 3. Monta a base do Payload com os dados fixos iniciais
     let payload = "000201" + merchantInfo + "520400005303986";
     
-    // 4. Adiciona o valor se ele for maior que zero, calculando o tamanho exato do bloco
+    // 4. Adiciona o valor se ele for maior que zero
     if (valor > 0) {
         const vStr = parseFloat(valor).toFixed(2);
         payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
     }
     
-    // 5. Adiciona os dados do recebedor e localização com seus respectivos tamanhos
+    // 5. Adiciona os dados do recebedor e localização calculando o tamanho exato em bytes
     payload += "5802BR";
-    payload += "59" + nome.length.toString().padStart(2, '0') + nome;
-    payload += "60" + city.length.toString().padStart(2, '0') + city;
+    payload += "59" + nomeLimpo.length.toString().padStart(2, '0') + nomeLimpo;
+    payload += "60" + cidadeLimpa.length.toString().padStart(2, '0') + cidadeLimpa;
     payload += "62070503PIX6304";
     
     // 6. Retorna o payload completo com o CRC16 no final
