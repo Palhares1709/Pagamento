@@ -255,17 +255,22 @@
        LÓGICA ORIGINAL DO PIX (MANTIDA)
        ========================================== */
     function gerarPix(chave, valor, nome, city) {
-        let payload = "00020126360014br.gov.bcb.pix0114" + chave + "520400005303986";
-        if (valor > 0) {
-            const vStr = parseFloat(valor).toFixed(2);
-            payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
-        }
-        payload += "5802BR";
-        payload += "59" + nome.length.toString().padStart(2, '0') + nome;
-        payload += "60" + city.length.toString().padStart(2, '0') + city;
-        payload += "62070503PIX6304";
-        return payload + calcularCRC16(payload);
+    // Calcula o tamanho da chave e formata com 2 dígitos (ex: se for 13 letras, vira "13")
+    const tamChave = chave.length.toString().padStart(2, '0');
+    
+    // Monta o início do PIX dinamicamente com o tamanho correto da chave
+    let payload = "00020126" + (34 + chave.length).toString() + "0014br.gov.bcb.pix01" + tamChave + chave + "520400005303986";
+    
+    if (valor > 0) {
+        const vStr = parseFloat(valor).toFixed(2);
+        payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
     }
+    payload += "5802BR";
+    payload += "59" + nome.length.toString().padStart(2, '0') + nome;
+    payload += "60" + city.length.toString().padStart(2, '0') + city;
+    payload += "62070503PIX6304";
+    return payload + calcularCRC16(payload);
+}
 
     function calcularCRC16(str) {
         let crc = 0xFFFF;
