@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Pagamento Pix - Apploc</title>
 
     <style>
-        /* ==========================================
-           1. ESTILOS GERAIS E ANIMAÇÕES
-           ========================================== */
 
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
+
+        /* =========================
+           ANIMAÇÕES
+           ========================= */
 
         @keyframes slideUp {
             from {
@@ -41,25 +43,24 @@
             }
         }
 
-        /* NOVA ANIMAÇÃO - STATUS */
         @keyframes statusPulse {
+
             0% {
-                opacity: 0.55;
-                transform: scale(0.98);
+                opacity: .65;
             }
 
             50% {
                 opacity: 1;
-                transform: scale(1);
             }
 
             100% {
-                opacity: 0.55;
-                transform: scale(0.98);
+                opacity: .65;
             }
+
         }
 
         @keyframes spinnerRotate {
+
             from {
                 transform: rotate(0deg);
             }
@@ -67,9 +68,11 @@
             to {
                 transform: rotate(360deg);
             }
+
         }
 
         @keyframes dotBlink {
+
             0%,
             20% {
                 opacity: 0;
@@ -82,306 +85,737 @@
             100% {
                 opacity: 0;
             }
+
         }
+
+        @keyframes successPop {
+
+            0% {
+                opacity: 0;
+                transform: scale(.6);
+            }
+
+            70% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+
+        }
+
+        @keyframes checkDraw {
+
+            0% {
+                transform: scale(.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+        /* =========================
+           BASE
+           ========================= */
 
         html,
         body {
+
             overflow-x: hidden;
             overflow-y: auto;
+
             width: 100%;
             min-height: 100%;
+
             margin: 0;
+
             background: #121212;
+
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+
+            font-family: 'Inter',
+                -apple-system,
+                BlinkMacSystemFont,
+                sans-serif;
+
             color: white;
+
             display: flex;
+
             justify-content: center;
+
             align-items: flex-start;
+
             padding: 40px 15px;
+
         }
 
         .container {
+
             text-align: center;
+
             width: 100%;
+
             max-width: 350px;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
-            animation: slideUp 0.6s ease-out;
+
+            animation:
+                slideUp .6s ease-out;
+
         }
 
+        /* =========================
+           LOGO
+           ========================= */
+
         .pix-logo-svg {
+
             width: 75px;
+
             height: auto;
+
             margin-bottom: 12px;
+
             display: block;
+
         }
 
         .pix-badge {
-            background: rgba(255, 255, 255, 0.07);
-            padding: 4px 12px;
+
+            background:
+                rgba(255,255,255,.07);
+
+            padding:
+                4px 12px;
+
             border-radius: 20px;
+
             font-size: 9px;
+
             color: #888;
+
             text-transform: uppercase;
+
             letter-spacing: 1.5px;
+
             margin-bottom: 20px;
+
         }
 
-        /* Modais de Alerta */
+        /* =========================
+           MODAL
+           ========================= */
 
         .modal-overlay {
+
             display: none;
+
             position: fixed;
+
             top: 0;
             left: 0;
+
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+
+            background:
+                rgba(0,0,0,.85);
+
             z-index: 1000;
+
             justify-content: center;
+
             align-items: center;
+
         }
 
         .modal-box {
+
             background: #1e1e1e;
-            border: 1px solid #64D2C1;
+
+            border:
+                1px solid #64D2C1;
+
             padding: 30px;
+
             border-radius: 24px;
+
             width: 90%;
+
             max-width: 300px;
+
             text-align: center;
-            animation: slideUp 0.3s ease-out;
+
+            animation:
+                successPop .4s ease-out;
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.5);
+
         }
 
-        /* Elementos das Telas */
+        /* =========================
+           TIMER
+           ========================= */
 
         #timer-display {
+
             display: none;
-            background: rgba(100, 210, 193, 0.1);
+
+            background:
+                rgba(100,210,193,.1);
+
             color: #64D2C1;
-            padding: 5px 15px;
+
+            padding: 6px 15px;
+
             border-radius: 12px;
+
             font-size: 14px;
+
             font-weight: 800;
+
             margin-bottom: 15px;
-            border: 1px solid rgba(100, 210, 193, 0.3);
+
+            border:
+                1px solid
+                rgba(100,210,193,.3);
+
         }
+
+        /* =========================
+           EMOJI
+           ========================= */
 
         .avatar-money {
+
             font-size: 48px;
+
             margin-bottom: -10px;
+
             display: inline-block;
-            animation: moneyPulse 1.5s infinite ease-in-out;
+
+            animation:
+                moneyPulse 1.5s infinite
+                ease-in-out;
+
             z-index: 10;
+
         }
+
+        /* =========================
+           CARD
+           ========================= */
 
         .card-main {
+
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            background:
+                rgba(255,255,255,.03);
+
+            border:
+                1px solid
+                rgba(255,255,255,.1);
+
             border-radius: 28px;
-            padding: 25px 20px;
+
+            padding:
+                25px 20px;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
         }
 
-        .qr-wrapper {
-            background: white;
-            padding: 10px;
+        /* =========================
+           VALOR
+           ========================= */
+
+        .valor-area {
+
+            width: 100%;
+
+            margin-bottom: 20px;
+
+            padding:
+                12px 10px 14px;
+
             border-radius: 18px;
+
+            background:
+                rgba(100,210,193,.06);
+
+            border:
+                1px solid
+                rgba(100,210,193,.15);
+
+        }
+
+        .valor-label {
+
+            font-size: 10px;
+
+            color: #777;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 4px;
+
+        }
+
+        .valor-pagamento {
+
+            color: #64D2C1;
+
+            font-size: 29px;
+
+            font-weight: 900;
+
+            letter-spacing: .3px;
+
+            line-height: 1.2;
+
+        }
+
+        /* =========================
+           QR
+           ========================= */
+
+        .qr-wrapper {
+
+            background: white;
+
+            padding: 10px;
+
+            border-radius: 18px;
+
             display: inline-block;
-            margin-bottom: 15px;
+
+            margin-bottom: 17px;
+
         }
 
         .qr-code {
+
             width: 160px;
+
             height: 160px;
+
             display: block;
+
         }
 
+        /* =========================
+           RECEBEDOR
+           ========================= */
+
         .recebedor-label {
+
             font-size: 10px;
+
             color: #666;
+
             letter-spacing: 2px;
+
             margin-bottom: 2px;
+
         }
 
         .recebedor-nome {
+
             font-size: 18px;
+
             font-weight: 700;
+
             color: #64D2C1;
+
             margin: 0;
+
         }
 
         .instituicao-label {
+
             font-size: 11px;
-            color: #ffffff;
+
+            color: #fff;
+
             margin-top: 5px;
+
             font-weight: 400;
-            letter-spacing: 0.5px;
+
+            letter-spacing: .5px;
+
             text-align: center;
+
         }
 
-        /* ==========================================
-           NOVA ÁREA DE STATUS ANIMADO
-           ========================================== */
+        /* =========================
+           STATUS PIX
+           ========================= */
 
         .payment-status {
+
             width: 100%;
+
             margin-top: 18px;
+
             padding: 12px 14px;
+
             border-radius: 14px;
-            background: rgba(255, 193, 7, 0.07);
-            border: 1px solid rgba(255, 193, 7, 0.25);
+
+            background:
+                rgba(255,193,7,.07);
+
+            border:
+                1px solid
+                rgba(255,193,7,.25);
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             gap: 9px;
-            animation: statusPulse 2s infinite ease-in-out;
+
+            animation:
+                statusPulse 2s
+                infinite
+                ease-in-out;
+
         }
 
         .status-spinner {
+
             width: 17px;
+
             height: 17px;
-            border: 2px solid rgba(255, 193, 7, 0.25);
-            border-top-color: #FFC107;
+
+            border:
+                2px solid
+                rgba(255,193,7,.25);
+
+            border-top-color:
+                #FFC107;
+
             border-radius: 50%;
-            animation: spinnerRotate 0.9s linear infinite;
+
+            animation:
+                spinnerRotate .9s
+                linear infinite;
+
             flex-shrink: 0;
+
         }
 
         .status-text {
-    color: #FFC107;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: 0.2px;
-}
+
+            color: #FFC107;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            letter-spacing: .2px;
+
+        }
 
         .status-dots span {
-            animation: dotBlink 1.4s infinite;
+
+            animation:
+                dotBlink 1.4s infinite;
+
             font-weight: bold;
+
         }
 
         .status-dots span:nth-child(2) {
-            animation-delay: 0.2s;
+
+            animation-delay: .2s;
+
         }
 
         .status-dots span:nth-child(3) {
-            animation-delay: 0.4s;
+
+            animation-delay: .4s;
+
         }
 
-        /* Botões de Ação */
+        /* =========================
+           SEGURANÇA
+           ========================= */
+
+        .security-badge {
+
+            width: 100%;
+
+            margin-top: 16px;
+
+            padding: 9px 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            color: #777;
+
+            font-size: 10px;
+
+            line-height: 1.4;
+
+        }
+
+        .security-icon {
+
+            font-size: 14px;
+
+        }
+
+        .security-text strong {
+
+            color: #aaa;
+
+            font-weight: 700;
+
+        }
+
+        /* =========================
+           BOTÕES
+           ========================= */
 
         .btn-action {
+
             background: #64D2C1;
+
             color: #121212;
+
             border: none;
+
             padding: 18px;
+
             width: 100%;
+
             font-size: 16px;
+
             font-weight: 800;
+
             border-radius: 16px;
+
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15);
+
+            transition: .2s;
+
+            box-shadow:
+                0 6px 12px
+                rgba(100,210,193,.15);
+
             margin-top: 20px;
+
         }
 
         .btn-action:active {
-            transform: scale(0.97);
+
+            transform: scale(.97);
+
         }
 
         .btn-success {
-            background: #4CAF50 !important;
+
+            background:
+                #4CAF50 !important;
+
             color: white !important;
+
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
+
+            background:
+                rgba(255,255,255,.1);
+
             color: white;
+
             margin-top: 10px;
+
             box-shadow: none;
+
         }
 
-        /* Caixas de Entrada de Texto */
+        /* =========================
+           INPUTS
+           ========================= */
+
+        input {
+
+            width: 100%;
+
+            padding: 18px;
+
+            border-radius: 16px;
+
+            border:
+                1px solid #333;
+
+            background: #1a1a1a;
+
+            color: white;
+
+            margin-bottom: 15px;
+
+            outline: none;
+
+            font-size: 16px;
+
+            text-align: center;
+
+        }
+
+        /* =========================
+           EXPIRADO
+           ========================= */
 
         #expired-msg {
+
             display: none;
+
             flex-direction: column;
+
             align-items: center;
+
             padding: 50px 20px;
+
         }
 
+        /* =========================
+           FOOTER
+           ========================= */
+
         .footer {
+
             margin-top: 40px;
+
             font-size: 9px;
+
             color: #333;
+
             letter-spacing: 2px;
+
             font-weight: 900;
+
         }
 
         .hidden {
+
             display: none !important;
+
         }
 
-        input {
-            width: 100%;
-            padding: 18px;
-            border-radius: 16px;
-            border: 1px solid #333;
-            background: #1a1a1a;
-            color: white;
-            margin-bottom: 15px;
-            outline: none;
-            font-size: 16px;
-            text-align: center;
-        }
+        /* =========================
+           ERROS
+           ========================= */
 
         .error-box {
+
             color: #ff5252;
-            background: rgba(255, 82, 82, 0.1);
-            border: 1px solid #ff5252;
+
+            background:
+                rgba(255,82,82,.1);
+
+            border:
+                1px solid #ff5252;
+
             padding: 15px;
+
             border-radius: 12px;
+
             margin-bottom: 15px;
+
             display: none;
+
             font-size: 14px;
+
             font-weight: 600;
+
             width: 100%;
+
             text-align: center;
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="modal-overlay" id="modalOverlay">
+
+<!-- =========================
+     MODAL
+     ========================= -->
+
+<div class="modal-overlay"
+     id="modalOverlay">
 
     <div class="modal-box">
 
         <div id="modalIcon"
-             style="font-size: 40px; margin-bottom: 10px;">
-            ✅
+             style="
+             font-size:40px;
+             margin-bottom:10px;">
+
+            ✓
+
         </div>
 
         <h3 id="modalTitle"
-            style="margin: 0 0 10px; color: #64D2C1;">
-            Copiado!
+            style="
+            margin:0 0 10px;
+            color:#64D2C1;">
+
+            PIX Copiado!
+
         </h3>
 
-        <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;"
-           id="modalText">
+        <p id="modalText"
+           style="
+           color:#aaa;
+           font-size:14px;
+           line-height:1.5;
+           margin-bottom:20px;">
+
         </p>
 
-        <button class="btn-action"
-                style="padding: 12px;"
-                onclick="closeModal()">
+        <button
+            class="btn-action"
+            style="padding:12px;"
+            onclick="closeModal()">
+
             OK
+
         </button>
 
     </div>
@@ -389,618 +823,808 @@
 </div>
 
 
-<div class="container" id="main-content">
+<div class="container"
+     id="main-content">
 
-    <!-- LOGO PIX -->
 
-    <svg class="pix-logo-svg"
-         viewBox="-20 -5 170 60"
-         xmlns="http://www.w3.org/2000/svg">
+<!-- =========================
+     LOGO
+     ========================= -->
 
-        <g transform="scale(0.9) translate(5, 2)">
+<svg
+    class="pix-logo-svg"
+    viewBox="-20 -5 170 60"
+    xmlns="http://www.w3.org/2000/svg">
 
-            <path d="M51.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z"
-                  fill="#FFF"/>
+    <g
+        transform="scale(0.9) translate(5,2)">
 
-        </g>
+        <path
+            d="M51.111 25.101c0 5.672-4.103 10.316-10.457 10.316h-5.94V14.786h5.94c6.354 0 10.457 4.644 10.457 10.315zm-4.322 0c0-3.327-2.181-6.143-6.135-6.143h-1.616v12.286h1.616c3.954 0 6.135-2.816 6.135-6.143zM60.672 35.417V14.786h4.316v20.631h-4.316zM77.92 25.101l7.857 10.316h-5.263l-5.114-7.07-5.114 7.07h-5.263l7.857-10.316-7.55-9.845h5.263l4.801 6.551 4.802-6.551h5.263l-7.551 9.845z"
+            fill="#FFF"/>
 
-        <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z"
-              fill="#64D2C1"/>
+    </g>
 
-        <path d="M25.753 23.9a10.342 10.342 0 01-3.03 7.311l-7.001 7.001a1.29 1.29 0 01-1.824 0l-7.002-7.001a10.344 10.344 0 010-14.622l7.002-7.002a1.29 1.29 0 011.824 0l7.001 7.002c1.954 1.954 3.03 4.552 3.03 7.31z"
-              stroke="#64D2C1"
-              stroke-width="2.5"
-              fill="none"/>
+    <path
+        d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z"
+        fill="#64D2C1"/>
 
-    </svg>
+    <path
+        d="M25.753 23.9a10.342 10.342 0 01-3.03 7.311l-7.001 7.001a1.29 1.29 0 01-1.824 0l-7.002-7.001a10.344 10.344 0 010-14.622l7.002-7.002a1.29 1.29 0 011.824 0l7.001 7.002c1.954 1.954 3.03 4.552 3.03 7.31z"
+        stroke="#64D2C1"
+        stroke-width="2.5"
+        fill="none"/>
 
+</svg>
 
-    <div class="pix-badge">
-        Pagamento Instantâneo
-    </div>
 
+<div class="pix-badge">
 
-    <!-- ==========================================
-         TELA DE AUTENTICAÇÃO
-         ========================================== -->
+    Pagamento Instantâneo
 
-    <div id="auth-screen"
-         class="hidden"
-         style="width: 100%;">
+</div>
 
-        <div class="card-main">
 
-            <h2 id="auth-title"
-                style="margin: 0 0 15px; font-size: 20px;">
-                Acesso Restrito
-            </h2>
+<!-- =========================
+     AUTENTICAÇÃO
+     ========================= -->
 
-            <div id="auth-error"
-                 class="error-box">
-            </div>
+<div id="auth-screen"
+     class="hidden"
+     style="width:100%;">
 
+    <div class="card-main">
 
-            <div id="step-email">
+        <h2
+            id="auth-title"
+            style="
+            margin:0 0 15px;
+            font-size:20px;">
 
-                <input type="email"
-                       id="authEmail"
-                       placeholder="Seu e-mail cadastrado">
+            Acesso Restrito
 
-                <button class="btn-action"
-                        id="btnSendCode"
-                        onclick="solicitarCodigo()">
-                    Enviar Código
-                </button>
-
-            </div>
-
-
-            <div id="step-code"
-                 class="hidden"
-                 style="width: 100%;">
-
-                <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">
-                    Digite o código de 6 dígitos enviado para o seu e-mail.
-                </p>
-
-                <input type="text"
-                       id="authCode"
-                       placeholder="Código de 6 dígitos"
-                       maxlength="6"
-                       inputmode="numeric">
-
-                <button class="btn-action"
-                        id="btnVerifyCode"
-                        onclick="verificarCodigo()">
-                    Verificar Código
-                </button>
-
-                <button class="btn-action btn-secondary"
-                        onclick="voltarParaEmail()">
-                    Voltar
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ==========================================
-         TELA DE CONFIGURAÇÃO
-         ========================================== -->
-
-    <div id="setup"
-         class="hidden"
-         style="width: 100%;">
-
-        <div class="card-main">
-
-            <h2 style="margin: 0 0 15px; font-size: 20px;">
-                Gerar Link Protegido
-            </h2>
-
-            <input type="text"
-                   id="nameInput"
-                   placeholder="Nome do Cliente">
-
-            <input type="number"
-                   id="valueInput"
-                   step="0.01"
-                   inputmode="decimal"
-                   placeholder="Valor R$ (Ex: 150.00)">
-
-            <button class="btn-action"
-                    onclick="createLink()">
-                Criar Mensagem WhatsApp
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- ==========================================
-         TELA DE PAGAMENTO
-         ========================================== -->
-
-    <div id="payment"
-         class="hidden"
-         style="width: 100%;">
-
-        <div id="error-display"
-             class="error-box">
-            Aviso: Link inválido ou alterado!
-        </div>
-
-
-        <div id="payment-content">
-
-            <div id="hi"
-                 style="font-size: 18px; margin-bottom: 12px;">
-                Olá!
-            </div>
-
-
-            <div id="timer-display">
-                link expira em:
-                <span id="countdown">
-                    05:00
-                </span>
-            </div>
-
-
-            <div class="avatar-money">
-                🤑
-            </div>
-
-
-            <div class="card-main">
-
-                <div class="qr-wrapper">
-
-                    <img src=""
-                         alt="QR Code"
-                         class="qr-code"
-                         id="qr">
-
-                </div>
-
-
-                <div class="recebedor-label">
-                    Recebedor
-                </div>
-
-
-                <div class="recebedor-nome">
-                    PALHARES
-                </div>
-
-
-                <div class="instituicao-label">
-                    Instituição: Banco do Brasil
-                </div>
-
-
-                <!-- ==========================================
-                     STATUS ANIMADO
-                     ========================================== -->
-
-                <div class="payment-status">
-
-                    <div class="status-spinner"></div>
-
-                    <div class="status-text">
-
-                        Aguardando pagamento
-
-                        <span class="status-dots">
-                            <span>.</span>
-                            <span>.</span>
-                            <span>.</span>
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <button class="btn-action"
-                    id="copyBtn"
-                    onclick="copyPix()">
-                Copiar Código Pix
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- ==========================================
-         LINK EXPIRADO
-         ========================================== -->
-
-    <div id="expired-msg">
-
-        <div style="font-size: 50px;">
-            ⏳
-        </div>
-
-        <h2 style="color: #64D2C1;">
-            O link expirou
         </h2>
 
-        <p style="color: #888; font-size: 14px;">
-            Este link expirou por segurança.
-        </p>
+        <div
+            id="auth-error"
+            class="error-box">
+        </div>
+
+
+        <div id="step-email">
+
+            <input
+                type="email"
+                id="authEmail"
+                placeholder="Seu e-mail cadastrado">
+
+            <button
+                class="btn-action"
+                id="btnSendCode"
+                onclick="solicitarCodigo()">
+
+                Enviar Código
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="step-code"
+            class="hidden"
+            style="width:100%;">
+
+            <p
+                style="
+                font-size:13px;
+                color:#aaa;
+                margin-bottom:15px;">
+
+                Digite o código de 6 dígitos enviado para o seu e-mail.
+
+            </p>
+
+            <input
+                type="text"
+                id="authCode"
+                placeholder="Código de 6 dígitos"
+                maxlength="6"
+                inputmode="numeric">
+
+            <button
+                class="btn-action"
+                id="btnVerifyCode"
+                onclick="verificarCodigo()">
+
+                Verificar Código
+
+            </button>
+
+            <button
+                class="btn-action btn-secondary"
+                onclick="voltarParaEmail()">
+
+                Voltar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SETUP
+     ========================= -->
+
+<div
+    id="setup"
+    class="hidden"
+    style="width:100%;">
+
+    <div class="card-main">
+
+        <h2
+            style="
+            margin:0 0 15px;
+            font-size:20px;">
+
+            Gerar Link Protegido
+
+        </h2>
+
+        <input
+            type="text"
+            id="nameInput"
+            placeholder="Nome do Cliente">
+
+        <input
+            type="number"
+            id="valueInput"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="Valor R$ (Ex: 150.00)">
+
+        <button
+            class="btn-action"
+            onclick="createLink()">
+
+            Criar Mensagem WhatsApp
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PAGAMENTO
+     ========================= -->
+
+<div
+    id="payment"
+    class="hidden"
+    style="width:100%;">
+
+    <div
+        id="error-display"
+        class="error-box">
+
+        Aviso: Link inválido ou alterado!
 
     </div>
 
 
-    <div class="footer"
-         id="main-footer">
-        POWERED BY PALHARES
+    <div id="payment-content">
+
+
+        <!-- SAUDAÇÃO ELEGANTE -->
+
+        <div
+            id="hi"
+            style="
+            font-size:19px;
+            margin-bottom:5px;
+            font-weight:500;">
+
+            Olá!
+
+        </div>
+
+        <div
+            style="
+            color:#777;
+            font-size:12px;
+            margin-bottom:14px;">
+
+            Seu pagamento está pronto 👋
+
+        </div>
+
+
+        <!-- TIMER -->
+
+        <div id="timer-display">
+
+            Link expira em:
+
+            <span id="countdown">
+
+                05:00
+
+            </span>
+
+        </div>
+
+
+        <div class="avatar-money">
+
+            🤑
+
+        </div>
+
+
+        <div class="card-main">
+
+
+            <!-- VALOR EM DESTAQUE -->
+
+            <div class="valor-area">
+
+                <div class="valor-label">
+
+                    Valor a pagar
+
+                </div>
+
+                <div
+                    class="valor-pagamento"
+                    id="valorPagamento">
+
+                    R$ 0,00
+
+                </div>
+
+            </div>
+
+
+            <!-- QR CODE -->
+
+            <div class="qr-wrapper">
+
+                <img
+                    src=""
+                    alt="QR Code Pix"
+                    class="qr-code"
+                    id="qr">
+
+            </div>
+
+
+            <!-- RECEBEDOR -->
+
+            <div class="recebedor-label">
+
+                Recebedor
+
+            </div>
+
+            <div class="recebedor-nome">
+
+                PALHARES
+
+            </div>
+
+            <div class="instituicao-label">
+
+                Instituição: Banco do Brasil
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="payment-status">
+
+                <div class="status-spinner"></div>
+
+                <div class="status-text">
+
+                    Aguardando pagamento
+
+                    <span class="status-dots">
+
+                        <span>.</span>
+                        <span>.</span>
+                        <span>.</span>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SEGURANÇA -->
+
+            <div class="security-badge">
+
+                <div class="security-icon">
+
+                    🔒
+
+                </div>
+
+                <div class="security-text">
+
+                    <strong>
+                        Pagamento protegido
+                    </strong>
+
+                    <br>
+
+                    Link seguro para seu pagamento
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- COPIAR -->
+
+        <button
+            class="btn-action"
+            id="copyBtn"
+            onclick="copyPix()">
+
+            Copiar Código Pix
+
+        </button>
+
+
     </div>
+
+</div>
+
+
+<!-- =========================
+     EXPIRADO
+     ========================= -->
+
+<div id="expired-msg">
+
+    <div style="font-size:50px;">
+
+        ⏳
+
+    </div>
+
+    <h2 style="color:#64D2C1;">
+
+        O link expirou
+
+    </h2>
+
+    <p
+        style="
+        color:#888;
+        font-size:14px;">
+
+        Este link expirou por segurança.
+
+    </p>
+
+</div>
+
+
+<div
+    class="footer"
+    id="main-footer">
+
+    POWERED BY PALHARES
+
+</div>
+
 
 </div>
 
 
 <script>
 
-    /* ==========================================
-       URL DO GOOGLE APPS SCRIPT
-       ========================================== */
 
-    const WEB_APP_URL =
-        "https://script.google.com/macros/s/AKfycbzw6MrfyBTayB_fQRXtZI0mtwsYU7PN4TD6jGZU0DEgYkkamPYSkkHbLbTDlAA9MotG1Q/exec";
+/* ==========================================
+   GOOGLE APPS SCRIPT
+   ========================================== */
 
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbzw6MrfyBTayB_fQRXtZI0mtwsYU7PN4TD6jGZU0DEgYkkamPYSkkHbLbTDlAA9MotG1Q/exec";
 
-    /* ==========================================
-       DADOS PIX
-       ========================================== */
 
-    const CHAVE_PIX =
-        "fcpalharess@gmail.com";
+/* ==========================================
+   DADOS PIX
+   ========================================== */
 
-    const NOME_RECEBEDOR =
-        "FRANCISCO ROCHA";
+const CHAVE_PIX =
+"fcpalharess@gmail.com";
 
-    const CIDADE_RECEBEDOR =
-        "MOSSORO";
+const NOME_RECEBEDOR =
+"FRANCISCO ROCHA";
 
+const CIDADE_RECEBEDOR =
+"MOSSORO";
 
-    /* ==========================================
-       PARÂMETROS DO LINK
-       ========================================== */
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+/* ==========================================
+   PARÂMETROS
+   ========================================== */
 
-    const tokenSeguro =
-        params.get('p');
+const params =
+new URLSearchParams(
+    window.location.search
+);
 
+const tokenSeguro =
+params.get('p');
 
-    let finalPixCode = "";
-    let clienteNome = "";
 
+let finalPixCode = "";
 
-    /* ==========================================
-       ABERTURA DO LINK
-       ========================================== */
+let clienteNome = "";
 
-    if (tokenSeguro) {
 
-        document
-            .getElementById('payment')
-            .classList
-            .remove('hidden');
+/* ==========================================
+   ABERTURA
+   ========================================== */
 
+if (tokenSeguro) {
 
-        try {
+    document
+        .getElementById('payment')
+        .classList
+        .remove('hidden');
 
-            const dadosDecodificados =
-                atob(tokenSeguro)
-                    .split('|');
 
+    try {
 
-            clienteNome =
-                dadosDecodificados[0];
+        const dadosDecodificados =
+            atob(tokenSeguro)
+            .split('|');
 
 
-            let valorNumerico =
-                parseFloat(
-                    dadosDecodificados[1]
-                ) || 0;
+        clienteNome =
+            dadosDecodificados[0];
 
 
-            if (!clienteNome ||
-                valorNumerico <= 0) {
+        let valorNumerico =
+            parseFloat(
+                dadosDecodificados[1]
+            ) || 0;
 
-                throw new Error(
-                    "Invalido"
-                );
-            }
 
+        if (
+            !clienteNome ||
+            valorNumerico <= 0
+        ) {
 
-            document
-                .getElementById('hi')
-                .innerHTML =
-                `Olá, <b>${clienteNome}</b>!`;
-
-
-            /* GERA O PIX */
-
-            finalPixCode =
-                gerarPix(
-                    CHAVE_PIX,
-                    valorNumerico,
-                    NOME_RECEBEDOR,
-                    CIDADE_RECEBEDOR
-                );
-
-
-            /* GERA QR CODE */
-
-            document
-                .getElementById('qr')
-                .src =
-                `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
-
-
-            /* CONTROLE DA EXPIRAÇÃO */
-
-            const dateKey =
-                new Date()
-                    .toLocaleDateString('pt-BR')
-                    .split('/')
-                    .join('');
-
-
-            const storageKey =
-                'locapp_deadline_' +
-                btoa(clienteNome) +
-                '_' +
-                dateKey;
-
-
-            const savedDeadline =
-                localStorage.getItem(
-                    storageKey
-                );
-
-
-            if (savedDeadline) {
-
-                startExpirationLogic(
-                    parseInt(savedDeadline),
-                    storageKey
-                );
-
-            }
-
-
-        } catch (e) {
-
-            document
-                .getElementById('payment-content')
-                .style
-                .display = 'none';
-
-
-            document
-                .getElementById('error-display')
-                .style
-                .display = 'block';
-
-        }
-
-
-    } else {
-
-        document
-            .getElementById('auth-screen')
-            .classList
-            .remove('hidden');
-
-    }
-
-
-    /* ==========================================
-       SOLICITAR CÓDIGO
-       ========================================== */
-
-    function solicitarCodigo() {
-
-        const email =
-            document
-                .getElementById('authEmail')
-                .value
-                .trim();
-
-
-        const errBox =
-            document
-                .getElementById('auth-error');
-
-
-        const btn =
-            document
-                .getElementById('btnSendCode');
-
-
-        errBox.style.display =
-            'none';
-
-
-        if (!email) {
-
-            return exibirErroAuth(
-                "Por favor, informe seu e-mail."
+            throw new Error(
+                "Invalido"
             );
 
         }
 
 
+        /* SAUDAÇÃO */
+
+        document
+            .getElementById('hi')
+            .innerHTML =
+            `Olá, <b style="color:#64D2C1;">${clienteNome}</b>! 👋`;
+
+
+        /* VALOR */
+
+        document
+            .getElementById(
+                'valorPagamento'
+            )
+            .innerText =
+            valorNumerico.toLocaleString(
+                'pt-BR',
+                {
+                    style: 'currency',
+                    currency: 'BRL'
+                }
+            );
+
+
+        /* GERA PIX */
+
+        finalPixCode =
+            gerarPix(
+                CHAVE_PIX,
+                valorNumerico,
+                NOME_RECEBEDOR,
+                CIDADE_RECEBEDOR
+            );
+
+
+        /* QR CODE */
+
+        document
+            .getElementById('qr')
+            .src =
+            `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
+
+
+        /* EXPIRAÇÃO */
+
+        const dateKey =
+            new Date()
+            .toLocaleDateString('pt-BR')
+            .split('/')
+            .join('');
+
+
+        const storageKey =
+            'locapp_deadline_' +
+            btoa(clienteNome) +
+            '_' +
+            dateKey;
+
+
+        const savedDeadline =
+            localStorage.getItem(
+                storageKey
+            );
+
+
+        if (savedDeadline) {
+
+            startExpirationLogic(
+                parseInt(savedDeadline),
+                storageKey
+            );
+
+        }
+
+
+    } catch (e) {
+
+        document
+            .getElementById(
+                'payment-content'
+            )
+            .style.display =
+            'none';
+
+
+        document
+            .getElementById(
+                'error-display'
+            )
+            .style.display =
+            'block';
+
+    }
+
+
+} else {
+
+    document
+        .getElementById(
+            'auth-screen'
+        )
+        .classList
+        .remove('hidden');
+
+}
+
+
+/* ==========================================
+   AUTENTICAÇÃO
+   ========================================== */
+
+function solicitarCodigo() {
+
+    const email =
+        document
+        .getElementById(
+            'authEmail'
+        )
+        .value
+        .trim();
+
+
+    const errBox =
+        document
+        .getElementById(
+            'auth-error'
+        );
+
+
+    const btn =
+        document
+        .getElementById(
+            'btnSendCode'
+        );
+
+
+    errBox.style.display =
+        'none';
+
+
+    if (!email) {
+
+        return exibirErroAuth(
+            "Por favor, informe seu e-mail."
+        );
+
+    }
+
+
+    btn.innerText =
+        "Enviando...";
+
+    btn.disabled =
+        true;
+
+
+    fetch(
+        WEB_APP_URL,
+        {
+
+            method: "POST",
+
+            mode: "no-cors",
+
+            headers: {
+                "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body:
+            `action=sendCode&email=${encodeURIComponent(email)}`
+
+        }
+
+    )
+
+    .then(() => {
+
+        document
+            .getElementById(
+                'step-email'
+            )
+            .classList
+            .add('hidden');
+
+
+        document
+            .getElementById(
+                'step-code'
+            )
+            .classList
+            .remove('hidden');
+
+
+        document
+            .getElementById(
+                'auth-title'
+            )
+            .innerText =
+            "Confirme o Código";
+
+    })
+
+    .catch(() => {
+
+        exibirErroAuth(
+            "Erro ao conectar com o servidor."
+        );
+
+
         btn.innerText =
-            "Enviando...";
+            "Enviar Código";
+
 
         btn.disabled =
-            true;
+            false;
+
+    });
+
+}
 
 
-        fetch(
-            WEB_APP_URL,
-            {
+/* ==========================================
+   VERIFICAR
+   ========================================== */
 
-                method: "POST",
+function verificarCodigo() {
 
-                mode: "no-cors",
-
-                headers: {
-                    "Content-Type":
-                        "application/x-www-form-urlencoded"
-                },
-
-                body:
-                    `action=sendCode&email=${encodeURIComponent(email)}`
-            }
+    const email =
+        document
+        .getElementById(
+            'authEmail'
         )
+        .value
+        .trim();
 
-        .then(() => {
+
+    const code =
+        document
+        .getElementById(
+            'authCode'
+        )
+        .value
+        .trim();
+
+
+    const btn =
+        document
+        .getElementById(
+            'btnVerifyCode'
+        );
+
+
+    if (
+        !code ||
+        code.length < 6
+    ) {
+
+        return exibirErroAuth(
+            "Digite o código de 6 dígitos."
+        );
+
+    }
+
+
+    btn.innerText =
+        "Verificando...";
+
+
+    btn.disabled =
+        true;
+
+
+    fetch(
+        `${WEB_APP_URL}?action=verifyCode&email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`
+    )
+
+    .then(
+        res => res.json()
+    )
+
+    .then(res => {
+
+        if (res.success) {
 
             document
-                .getElementById('step-email')
+                .getElementById(
+                    'auth-screen'
+                )
                 .classList
                 .add('hidden');
 
 
             document
-                .getElementById('step-code')
+                .getElementById(
+                    'setup'
+                )
                 .classList
                 .remove('hidden');
 
-
-            document
-                .getElementById('auth-title')
-                .innerText =
-                "Confirme o Código";
-
-        })
-
-        .catch(err => {
+        } else {
 
             exibirErroAuth(
-                "Erro ao conectar com o servidor."
-            );
-
-
-            btn.innerText =
-                "Enviar Código";
-
-
-            btn.disabled =
-                false;
-
-        });
-
-    }
-
-
-    /* ==========================================
-       VERIFICAR CÓDIGO
-       ========================================== */
-
-    function verificarCodigo() {
-
-        const email =
-            document
-                .getElementById('authEmail')
-                .value
-                .trim();
-
-
-        const code =
-            document
-                .getElementById('authCode')
-                .value
-                .trim();
-
-
-        const btn =
-            document
-                .getElementById('btnVerifyCode');
-
-
-        if (!code ||
-            code.length < 6) {
-
-            return exibirErroAuth(
-                "Digite o código de 6 dígitos."
-            );
-
-        }
-
-
-        btn.innerText =
-            "Verificando...";
-
-
-        btn.disabled =
-            true;
-
-
-        fetch(
-            `${WEB_APP_URL}?action=verifyCode&email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`
-        )
-
-        .then(res =>
-            res.json()
-        )
-
-        .then(res => {
-
-            if (res.success) {
-
-                document
-                    .getElementById('auth-screen')
-                    .classList
-                    .add('hidden');
-
-
-                document
-                    .getElementById('setup')
-                    .classList
-                    .remove('hidden');
-
-
-            } else {
-
-                exibirErroAuth(
-                    res.message ||
-                    "Código inválido ou expirado."
-                );
-
-
-                btn.innerText =
-                    "Verificar Código";
-
-
-                btn.disabled =
-                    false;
-
-            }
-
-        })
-
-        .catch(() => {
-
-            exibirErroAuth(
-                "Erro na validação. Tente novamente."
+                res.message ||
+                "Código inválido ou expirado."
             );
 
 
@@ -1011,591 +1635,647 @@
             btn.disabled =
                 false;
 
-        });
-
-    }
-
-
-    /* ==========================================
-       VOLTAR PARA E-MAIL
-       ========================================== */
-
-    function voltarParaEmail() {
-
-        document
-            .getElementById('step-code')
-            .classList
-            .add('hidden');
-
-
-        document
-            .getElementById('step-email')
-            .classList
-            .remove('hidden');
-
-
-        document
-            .getElementById('auth-title')
-            .innerText =
-            "Acesso Restrito";
-
-
-        document
-            .getElementById('btnSendCode')
-            .innerText =
-            "Enviar Código";
-
-
-        document
-            .getElementById('btnSendCode')
-            .disabled =
-            false;
-
-    }
-
-
-    /* ==========================================
-       ERRO DE AUTENTICAÇÃO
-       ========================================== */
-
-    function exibirErroAuth(msg) {
-
-        const errBox =
-            document
-                .getElementById('auth-error');
-
-
-        errBox.innerText =
-            msg;
-
-
-        errBox.style.display =
-            'block';
-
-    }
-
-
-    /* ========================================================
-       LÓGICA DO PIX
-       ======================================================== */
-
-    function gerarPix(
-        chave,
-        valor,
-        nome,
-        city
-    ) {
-
-        const limparTexto =
-            (txt) => {
-
-                return txt
-                    .normalize("NFD")
-                    .replace(
-                        /[\u0300-\u036f]/g,
-                        ""
-                    )
-                    .toUpperCase()
-                    .replace(
-                        /[^A-Z0-9 ]/g,
-                        ""
-                    )
-                    .trim();
-
-            };
-
-
-        const nomeLimpo =
-            limparTexto(nome);
-
-
-        const cidadeLimpa =
-            limparTexto(city);
-
-
-        const chaveLimpa =
-            chave.replace(
-                /\s+/g,
-                ''
-            );
-
-
-        /* BLOCO 26 */
-
-        const tamChave =
-            chaveLimpa.length
-                .toString()
-                .padStart(2, '0');
-
-
-        const bbcbPix =
-            "0014br.gov.bcb.pix01" +
-            tamChave +
-            chaveLimpa;
-
-
-        const merchantInfo =
-            "26" +
-            bbcbPix.length
-                .toString()
-                .padStart(2, '0') +
-            bbcbPix;
-
-
-        /* PAYLOAD */
-
-        let payload =
-            "000201" +
-            merchantInfo +
-            "520400005303986";
-
-
-        /* VALOR */
-
-        if (valor > 0) {
-
-            const vStr =
-                parseFloat(valor)
-                    .toFixed(2);
-
-
-            payload +=
-                "54" +
-                vStr.length
-                    .toString()
-                    .padStart(2, '0') +
-                vStr;
-
         }
 
+    })
 
-        /* PAÍS */
+    .catch(() => {
+
+        exibirErroAuth(
+            "Erro na validação. Tente novamente."
+        );
+
+
+        btn.innerText =
+            "Verificar Código";
+
+
+        btn.disabled =
+            false;
+
+    });
+
+}
+
+
+/* ==========================================
+   VOLTAR
+   ========================================== */
+
+function voltarParaEmail() {
+
+    document
+        .getElementById(
+            'step-code'
+        )
+        .classList
+        .add('hidden');
+
+
+    document
+        .getElementById(
+            'step-email'
+        )
+        .classList
+        .remove('hidden');
+
+
+    document
+        .getElementById(
+            'auth-title'
+        )
+        .innerText =
+        "Acesso Restrito";
+
+
+    document
+        .getElementById(
+            'btnSendCode'
+        )
+        .innerText =
+        "Enviar Código";
+
+
+    document
+        .getElementById(
+            'btnSendCode'
+        )
+        .disabled =
+        false;
+
+}
+
+
+/* ==========================================
+   ERRO
+   ========================================== */
+
+function exibirErroAuth(msg) {
+
+    const errBox =
+        document
+        .getElementById(
+            'auth-error'
+        );
+
+
+    errBox.innerText =
+        msg;
+
+
+    errBox.style.display =
+        'block';
+
+}
+
+
+/* ==========================================
+   GERADOR PIX
+   ========================================== */
+
+function gerarPix(
+    chave,
+    valor,
+    nome,
+    city
+) {
+
+    const limparTexto =
+        (txt) => {
+
+            return txt
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                )
+                .toUpperCase()
+                .replace(
+                    /[^A-Z0-9 ]/g,
+                    ""
+                )
+                .trim();
+
+        };
+
+
+    const nomeLimpo =
+        limparTexto(nome);
+
+
+    const cidadeLimpa =
+        limparTexto(city);
+
+
+    const chaveLimpa =
+        chave.replace(
+            /\s+/g,
+            ''
+        );
+
+
+    const tamChave =
+        chaveLimpa.length
+        .toString()
+        .padStart(2,'0');
+
+
+    const bbcbPix =
+        "0014br.gov.bcb.pix01" +
+        tamChave +
+        chaveLimpa;
+
+
+    const merchantInfo =
+        "26" +
+        bbcbPix.length
+        .toString()
+        .padStart(2,'0') +
+        bbcbPix;
+
+
+    let payload =
+        "000201" +
+        merchantInfo +
+        "520400005303986";
+
+
+    if (valor > 0) {
+
+        const vStr =
+            parseFloat(valor)
+            .toFixed(2);
+
 
         payload +=
-            "5802BR";
-
-
-        /* RECEBEDOR */
-
-        payload +=
-            "59" +
-            nomeLimpo.length
-                .toString()
-                .padStart(2, '0') +
-            nomeLimpo;
-
-
-        /* CIDADE */
-
-        payload +=
-            "60" +
-            cidadeLimpa.length
-                .toString()
-                .padStart(2, '0') +
-            cidadeLimpa;
-
-
-        /* TXID */
-
-        payload +=
-            "62070503***";
-
-
-        /* CRC */
-
-        payload +=
-            "6304";
-
-
-        return payload +
-            calcularCRC16(payload);
+            "54" +
+            vStr.length
+            .toString()
+            .padStart(2,'0') +
+            vStr;
 
     }
 
 
-    /* ==========================================
-       CRC16
-       ========================================== */
+    payload +=
+        "5802BR";
 
-    function calcularCRC16(str) {
 
-        let crc =
-            0xFFFF;
+    payload +=
+        "59" +
+        nomeLimpo.length
+        .toString()
+        .padStart(2,'0') +
+        nomeLimpo;
+
+
+    payload +=
+        "60" +
+        cidadeLimpa.length
+        .toString()
+        .padStart(2,'0') +
+        cidadeLimpa;
+
+
+    payload +=
+        "62070503***";
+
+
+    payload +=
+        "6304";
+
+
+    return payload +
+        calcularCRC16(
+            payload
+        );
+
+}
+
+
+/* ==========================================
+   CRC16
+   ========================================== */
+
+function calcularCRC16(str) {
+
+    let crc =
+        0xFFFF;
+
+
+    for (
+        let i = 0;
+        i < str.length;
+        i++
+    ) {
+
+        crc ^=
+            str.charCodeAt(i) << 8;
 
 
         for (
-            let i = 0;
-            i < str.length;
-            i++
+            let j = 0;
+            j < 8;
+            j++
         ) {
 
-            crc ^=
-                str.charCodeAt(i) << 8;
-
-
-            for (
-                let j = 0;
-                j < 8;
-                j++
+            if (
+                (crc & 0x8000) !== 0
             ) {
 
-                if (
-                    (crc & 0x8000) !== 0
-                ) {
+                crc =
+                    (crc << 1) ^
+                    0x1021;
 
-                    crc =
-                        (crc << 1) ^
-                        0x1021;
+            } else {
 
-                } else {
-
-                    crc <<= 1;
-
-                }
+                crc <<= 1;
 
             }
 
         }
 
+    }
 
-        return (
-            crc & 0xFFFF
+
+    return (
+        crc & 0xFFFF
+    )
+    .toString(16)
+    .toUpperCase()
+    .padStart(4,'0');
+
+}
+
+
+/* ==========================================
+   CRIAR LINK
+   ========================================== */
+
+function createLink() {
+
+    const n =
+        document
+        .getElementById(
+            'nameInput'
         )
-        .toString(16)
-        .toUpperCase()
-        .padStart(4, '0');
+        .value;
+
+
+    const v =
+        document
+        .getElementById(
+            'valueInput'
+        )
+        .value;
+
+
+    if (!n || !v) {
+
+        return showModal(
+            "Atenção",
+            "Preencha o nome e o valor.",
+            "⚠️"
+        );
 
     }
 
 
-    /* ==========================================
-       CRIAR LINK
-       ========================================== */
-
-    function createLink() {
-
-        const n =
-            document
-                .getElementById('nameInput')
-                .value;
-
-
-        const v =
-            document
-                .getElementById('valueInput')
-                .value;
+    const valorFormatado =
+        parseFloat(v)
+        .toLocaleString(
+            'pt-BR',
+            {
+                style:'currency',
+                currency:'BRL'
+            }
+        );
 
 
-        if (!n || !v) {
+    const stringUnificada =
+        n +
+        "|" +
+        parseFloat(v)
+        .toFixed(2);
 
-            return showModal(
-                "Atenção",
-                "Preencha o nome e o valor.",
-                "⚠️"
+
+    const tokenSeguroGerado =
+        btoa(
+            stringUnificada
+        );
+
+
+    const urlFinal =
+        window.location.origin +
+        window.location.pathname +
+        "?p=" +
+        tokenSeguroGerado;
+
+
+    const mensagemWhatsApp =
+        `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
+
+
+    navigator.clipboard
+        .writeText(
+            mensagemWhatsApp
+        )
+
+        .then(() => {
+
+            showModal(
+                "Mensagem Copiada!",
+                "O texto já foi copiado. É só abrir o WhatsApp e colar para o seu cliente.",
+                "✓"
             );
 
-        }
 
-
-        const valorFormatado =
-            parseFloat(v)
-                .toLocaleString(
-                    'pt-BR',
-                    {
-                        style: 'currency',
-                        currency: 'BRL'
-                    }
-                );
-
-
-        const stringUnificada =
-            n +
-            "|" +
-            parseFloat(v)
-                .toFixed(2);
-
-
-        const tokenSeguroGerado =
-            btoa(
-                stringUnificada
-            );
-
-
-        const urlFinal =
-            window.location.origin +
-            window.location.pathname +
-            "?p=" +
-            tokenSeguroGerado;
-
-
-        const mensagemWhatsApp =
-            `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
-
-
-        navigator.clipboard
-            .writeText(
-                mensagemWhatsApp
-            )
-
-            .then(() => {
-
-                showModal(
-                    "Mensagem Copiada!",
-                    "O texto já foi copiado. É só abrir o WhatsApp e colar para o seu cliente.",
-                    "✅"
-                );
-
-
-                document
-                    .getElementById('nameInput')
-                    .value = "";
-
-
-                document
-                    .getElementById('valueInput')
-                    .value = "";
-
-            });
-
-    }
-
-
-    /* ==========================================
-       COPIAR PIX
-       ========================================== */
-
-    function copyPix() {
-
-        navigator.clipboard
-            .writeText(
-                finalPixCode
-            )
-
-            .then(() => {
-
-                const b =
-                    document
-                        .getElementById('copyBtn');
-
-
-                b.innerText =
-                    "✓ CÓDIGO COPIADO";
-
-
-                b.classList
-                    .add('btn-success');
-
-
-                const dateKey =
-                    new Date()
-                        .toLocaleDateString('pt-BR')
-                        .split('/')
-                        .join('');
-
-
-                const storageKey =
-                    'locapp_deadline_' +
-                    btoa(clienteNome) +
-                    '_' +
-                    dateKey;
-
-
-                if (
-                    !localStorage
-                        .getItem(storageKey)
-                ) {
-
-                    const deadline =
-                        new Date().getTime() +
-                        (
-                            5 *
-                            60 *
-                            1000
-                        );
-
-
-                    localStorage.setItem(
-                        storageKey,
-                        deadline
-                    );
-
-
-                    startExpirationLogic(
-                        deadline,
-                        storageKey
-                    );
-
-                }
-
-            });
-
-    }
-
-
-    /* ==========================================
-       MODAL
-       ========================================== */
-
-    function showModal(
-        title,
-        msg,
-        icon
-    ) {
-
-        document
-            .getElementById('modalTitle')
-            .innerText =
-            title;
-
-
-        document
-            .getElementById('modalText')
-            .innerText =
-            msg;
-
-
-        document
-            .getElementById('modalIcon')
-            .innerText =
-            icon;
-
-
-        document
-            .getElementById('modalOverlay')
-            .style
-            .display =
-            'flex';
-
-    }
-
-
-    function closeModal() {
-
-        document
-            .getElementById('modalOverlay')
-            .style
-            .display =
-            'none';
-
-    }
-
-
-    /* ==========================================
-       EXPIRAÇÃO
-       ========================================== */
-
-    function startExpirationLogic(
-        deadline,
-        key
-    ) {
-
-        const timerDisplay =
             document
                 .getElementById(
-                    'timer-display'
+                    'nameInput'
+                )
+                .value = "";
+
+
+            document
+                .getElementById(
+                    'valueInput'
+                )
+                .value = "";
+
+        });
+
+}
+
+
+/* ==========================================
+   COPIAR PIX
+   ========================================== */
+
+function copyPix() {
+
+    navigator.clipboard
+        .writeText(
+            finalPixCode
+        )
+
+        .then(() => {
+
+            const b =
+                document
+                .getElementById(
+                    'copyBtn'
                 );
 
 
-        timerDisplay.style.display =
-            'inline-block';
+            b.innerText =
+                "✓ PIX COPIADO!";
 
 
-        const x =
-            setInterval(
-                function() {
-
-                    const now =
-                        new Date()
-                            .getTime();
+            b.classList
+                .add(
+                    'btn-success'
+                );
 
 
-                    const distance =
-                        deadline -
-                        now;
+            /* MODAL ANIMADO */
+
+            showModal(
+                "PIX Copiado!",
+                "Código copiado com sucesso! Abra o aplicativo do seu banco e cole o código para realizar o pagamento.",
+                "✓"
+            );
 
 
-                    const minutes =
-                        Math.floor(
+            /* EXPIRAÇÃO */
+
+            const dateKey =
+                new Date()
+                .toLocaleDateString(
+                    'pt-BR'
+                )
+                .split('/')
+                .join('');
+
+
+            const storageKey =
+                'locapp_deadline_' +
+                btoa(clienteNome) +
+                '_' +
+                dateKey;
+
+
+            if (
+                !localStorage
+                .getItem(storageKey)
+            ) {
+
+                const deadline =
+                    new Date()
+                    .getTime() +
+                    (
+                        5 *
+                        60 *
+                        1000
+                    );
+
+
+                localStorage.setItem(
+                    storageKey,
+                    deadline
+                );
+
+
+                startExpirationLogic(
+                    deadline,
+                    storageKey
+                );
+
+            }
+
+        });
+
+}
+
+
+/* ==========================================
+   MODAL
+   ========================================== */
+
+function showModal(
+    title,
+    msg,
+    icon
+) {
+
+    document
+        .getElementById(
+            'modalTitle'
+        )
+        .innerText =
+        title;
+
+
+    document
+        .getElementById(
+            'modalText'
+        )
+        .innerText =
+        msg;
+
+
+    document
+        .getElementById(
+            'modalIcon'
+        )
+        .innerText =
+        icon;
+
+
+    document
+        .getElementById(
+            'modalOverlay'
+        )
+        .style
+        .display =
+        'flex';
+
+}
+
+
+function closeModal() {
+
+    document
+        .getElementById(
+            'modalOverlay'
+        )
+        .style
+        .display =
+        'none';
+
+}
+
+
+/* ==========================================
+   EXPIRAÇÃO
+   ========================================== */
+
+function startExpirationLogic(
+    deadline,
+    key
+) {
+
+    const timerDisplay =
+        document
+        .getElementById(
+            'timer-display'
+        );
+
+
+    timerDisplay.style.display =
+        'inline-block';
+
+
+    const x =
+        setInterval(
+            function() {
+
+                const now =
+                    new Date()
+                    .getTime();
+
+
+                const distance =
+                    deadline -
+                    now;
+
+
+                const minutes =
+                    Math.floor(
+                        (
+                            distance %
                             (
-                                distance %
-                                (
-                                    1000 *
-                                    60 *
-                                    60
-                                )
-                            ) /
+                                1000 *
+                                60 *
+                                60
+                            )
+                        ) /
+                        (
+                            1000 *
+                            60
+                        )
+                    );
+
+
+                const seconds =
+                    Math.floor(
+                        (
+                            distance %
                             (
                                 1000 *
                                 60
                             )
-                        );
+                        ) /
+                        1000
+                    );
 
 
-                    const seconds =
-                        Math.floor(
-                            (
-                                distance %
-                                (
-                                    1000 *
-                                    60
-                                )
-                            ) /
-                            1000
-                        );
+                document
+                    .getElementById(
+                        "countdown"
+                    )
+                    .innerHTML =
+
+                    (
+                        minutes < 10
+                            ? "0" + minutes
+                            : minutes
+                    )
+
+                    +
+
+                    ":"
+
+                    +
+
+                    (
+                        seconds < 10
+                            ? "0" + seconds
+                            : seconds
+                    );
+
+
+                if (
+                    distance < 0
+                ) {
+
+                    clearInterval(x);
 
 
                     document
                         .getElementById(
-                            "countdown"
+                            'payment'
                         )
-                        .innerHTML =
-
-                        (
-                            minutes < 10
-                                ? "0" + minutes
-                                : minutes
-                        ) +
-
-                        ":" +
-
-                        (
-                            seconds < 10
-                                ? "0" + seconds
-                                : seconds
-                        );
+                        .style
+                        .display =
+                        'none';
 
 
-                    if (
-                        distance < 0
-                    ) {
+                    document
+                        .getElementById(
+                            'expired-msg'
+                        )
+                        .style
+                        .display =
+                        'flex';
 
-                        clearInterval(x);
+                }
 
+            },
+            1000
+        );
 
-                        document
-                            .getElementById(
-                                'payment'
-                            )
-                            .style
-                            .display =
-                            'none';
-
-
-                        document
-                            .getElementById(
-                                'expired-msg'
-                            )
-                            .style
-                            .display =
-                            'flex';
-
-                    }
-
-                },
-                1000
-            );
-
-    }
+}
 
 </script>
 
