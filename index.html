@@ -16,11 +16,11 @@
         .container { text-align: center; width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center; animation: slideUp 0.6s ease-out; }
         .pix-logo-svg { width: 75px; height: auto; margin-bottom: 12px; display: block; }
         .pix-badge { background: rgba(255, 255, 255, 0.07); padding: 4px 12px; border-radius: 20px; font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; }
-        
+
         /* Modais de Alerta */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background: #1e1e1e; border: 1px solid #64D2C1; padding: 30px; border-radius: 24px; width: 90%; max-width: 300px; text-align: center; animation: slideUp 0.3s ease-out; }
-        
+
         /* Elementos das Telas */
         #timer-display { display: none; background: rgba(100, 210, 193, 0.1); color: #64D2C1; padding: 5px 15px; border-radius: 12px; font-size: 14px; font-weight: 800; margin-bottom: 15px; border: 1px solid rgba(100, 210, 193, 0.3); }
         .avatar-money { font-size: 48px; margin-bottom: -10px; display: inline-block; animation: moneyPulse 1.5s infinite ease-in-out; z-index: 10; }
@@ -30,13 +30,13 @@
         .recebedor-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 2px; }
         .recebedor-nome { font-size: 18px; font-weight: 700; color: #64D2C1; margin: 0; }
         .instituicao-label { font-size: 11px; color: #ffffff; margin-top: 5px; font-weight: 400; letter-spacing: 0.5px; text-align: center; }
-        
+
         /* Botões de Ação */
         .btn-action { background: #64D2C1; color: #121212; border: none; padding: 18px; width: 100%; font-size: 16px; font-weight: 800; border-radius: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 12px rgba(100, 210, 193, 0.15); margin-top: 20px; }
         .btn-action:active { transform: scale(0.97); }
         .btn-success { background: #4CAF50 !important; color: white !important; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: white; margin-top: 10px; box-shadow: none; }
-        
+
         /* Caixas de Entrada de Texto */
         #expired-msg { display: none; flex-direction: column; align-items: center; padding: 50px 20px; }
         .footer { margin-top: 40px; font-size: 9px; color: #333; letter-spacing: 2px; font-weight: 900; }
@@ -64,14 +64,14 @@
         <path d="M16.31 32.723l7.001-7.001a1.29 1.29 0 000-1.824l-7.001-7.002a1.29 1.29 0 00-1.824 0l-7.002 7.002a1.29 1.29 0 000 1.824l7.002 7.001a1.29 1.29 0 001.824 0z" fill="#64D2C1"/>
         <path d="M25.753 23.9a10.342 10.342 0 01-3.03 7.311l-7.001 7.001a1.29 1.29 0 01-1.824 0l-7.002-7.001a10.344 10.344 0 010-14.622l7.002-7.002a1.29 1.29 0 011.824 0l7.001 7.002c1.954 1.954 3.03 4.552 3.03 7.31z" stroke="#64D2C1" stroke-width="2.5" fill="none"/>
     </svg>
-    
+
     <div class="pix-badge">Pagamento Instantâneo</div>
 
     <div id="auth-screen" class="hidden" style="width: 100%;">
         <div class="card-main">
             <h2 id="auth-title" style="margin: 0 0 15px; font-size: 20px;">Acesso Restrito</h2>
             <div id="auth-error" class="error-box"></div>
-            
+
             <div id="step-email">
                 <input type="email" id="authEmail" placeholder="Seu e-mail cadastrado">
                 <button class="btn-action" id="btnSendCode" onclick="solicitarCodigo()">Enviar Código</button>
@@ -125,15 +125,18 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzw6MrfyBTayB_fQRXtZI0mtwsYU7PN4TD6jGZU0DEgYkkamPYSkkHbLbTDlAA9MotG1Q/exec";
 
-    // Dados calibrados e encurtados de acordo com os limites estritos do Banco Central
-    const CHAVE_PIX = "+5584991339061"; 
-    const NOME_RECEBEDOR = "FRANCISCO ROCHA"; 
+    // ============================================================
+    // NOVA CHAVE PIX
+    // Alterado somente a chave, mantendo o restante do sistema
+    // ============================================================
+    const CHAVE_PIX = "fcpalharess@gmail.com";
+    const NOME_RECEBEDOR = "FRANCISCO ROCHA";
     const CIDADE_RECEBEDOR = "MOSSORO";
 
     const params = new URLSearchParams(window.location.search);
-    const tokenSeguro = params.get('p'); 
-    
-    let finalPixCode = ""; 
+    const tokenSeguro = params.get('p');
+
+    let finalPixCode = "";
     let clienteNome = "";
 
     if (tokenSeguro) {
@@ -146,12 +149,12 @@
             if(!clienteNome || valorNumerico <= 0) throw new Error("Invalido");
 
             document.getElementById('hi').innerHTML = `Olá, <b>${clienteNome}</b>!`;
-            
+
             finalPixCode = gerarPix(CHAVE_PIX, valorNumerico, NOME_RECEBEDOR, CIDADE_RECEBEDOR);
             document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(finalPixCode)}`;
-            
+
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
-            const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey; 
+            const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey;
             const savedDeadline = localStorage.getItem(storageKey);
             if (savedDeadline) startExpirationLogic(parseInt(savedDeadline), storageKey);
 
@@ -167,7 +170,7 @@
         const email = document.getElementById('authEmail').value.trim();
         const errBox = document.getElementById('auth-error');
         const btn = document.getElementById('btnSendCode');
-        
+
         errBox.style.display = 'none';
         if(!email) return exibirErroAuth("Por favor, informe seu e-mail.");
 
@@ -196,7 +199,7 @@
         const email = document.getElementById('authEmail').value.trim();
         const code = document.getElementById('authCode').value.trim();
         const btn = document.getElementById('btnVerifyCode');
-        
+
         if(!code || code.length < 6) return exibirErroAuth("Digite o código de 6 dígitos.");
 
         btn.innerText = "Verificando...";
@@ -241,41 +244,41 @@
     function gerarPix(chave, valor, nome, city) {
         const limparTexto = (txt) => {
             return txt.normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g, "") 
+                      .replace(/[\u0300-\u036f]/g, "")
                       .toUpperCase()
-                      .replace(/[^A-Z0-9 ]/g, "")    
+                      .replace(/[^A-Z0-9 ]/g, "")
                       .trim();
         };
 
         const nomeLimpo = limparTexto(nome);
         const cidadeLimpa = limparTexto(city);
-        const chaveLimpa = chave.replace(/\s+/g, ''); 
+        const chaveLimpa = chave.replace(/\s+/g, '');
 
         // Bloco 26: Informações da Chave Pix calculadas de forma dinâmica
         const tamChave = chaveLimpa.length.toString().padStart(2, '0');
         const bbcbPix = "0014br.gov.bcb.pix01" + tamChave + chaveLimpa;
         const merchantInfo = "26" + bbcbPix.length.toString().padStart(2, '0') + bbcbPix;
-        
-        // Inicializa o Payload com o Bloco 00 (Padrão) e o Bloco 26 dinâmico
+
+        // Inicializa o Payload com o Bloco 00 (Padrão) e Bloco 26 dinâmico
         let payload = "000201" + merchantInfo + "520400005303986";
-        
+
         // Bloco 54: Valor da transação com duas casas decimais
         if (valor > 0) {
             const vStr = parseFloat(valor).toFixed(2);
             payload += "54" + vStr.length.toString().padStart(2, '0') + vStr;
         }
-        
+
         // Bloco 58, 59 e 60: Código País, Nome do Recebedor e Cidade
         payload += "5802BR";
         payload += "59" + nomeLimpo.length.toString().padStart(2, '0') + nomeLimpo;
         payload += "60" + cidadeLimpa.length.toString().padStart(2, '0') + cidadeLimpa;
-        
-        // Bloco 62: ID da Transação (TXID) - Ajustado milimetricamente para o validador da Caixa
+
+        // Bloco 62: ID da Transação (TXID)
         payload += "62070503***";
-        
+
         // Bloco 63: Indicador de fechamento obrigatório para cálculo do CRC16
         payload += "6304";
-        
+
         return payload + calcularCRC16(payload);
     }
 
@@ -288,21 +291,28 @@
                 else crc <<= 1;
             }
         }
+
         return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
     }
 
     function createLink() {
         const n = document.getElementById('nameInput').value;
         const v = document.getElementById('valueInput').value;
+
         if(!n || !v) return showModal("Atenção", "Preencha o nome e o valor.", "⚠️");
-        
-        const valorFormatado = parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        const valorFormatado = parseFloat(v).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+
         const stringUnificada = n + "|" + parseFloat(v).toFixed(2);
         const tokenSeguroGerado = btoa(stringUnificada);
-        
+
         const urlFinal = window.location.origin + window.location.pathname + "?p=" + tokenSeguroGerado;
+
         const mensagemWhatsApp = `Olá! Seu link de pagamento seguro para *Palhares* está pronto. \n\n🔹 *Pagador:* ${n}\n🔹 *Valor:* ${valorFormatado}\n\nClique no link abaixo para abrir a tela e acessar o QR Code:\n👉 ${urlFinal}`;
-        
+
         navigator.clipboard.writeText(mensagemWhatsApp).then(() => {
             showModal("Mensagem Copiada!", "O texto já foi copiado. É só abrir o WhatsApp e colar para o seu cliente.", "✅");
             document.getElementById('nameInput').value = "";
@@ -315,9 +325,10 @@
             const b = document.getElementById('copyBtn');
             b.innerText = "✓ CÓDIGO COPIADO";
             b.classList.add('btn-success');
-            
+
             const dateKey = new Date().toLocaleDateString('pt-BR').split('/').join('');
             const storageKey = 'locapp_deadline_' + btoa(clienteNome) + '_' + dateKey;
+
             if (!localStorage.getItem(storageKey)) {
                 const deadline = new Date().getTime() + (5 * 60 * 1000);
                 localStorage.setItem(storageKey, deadline);
@@ -340,12 +351,18 @@
     function startExpirationLogic(deadline, key) {
         const timerDisplay = document.getElementById('timer-display');
         timerDisplay.style.display = 'inline-block';
+
         const x = setInterval(function() {
             const now = new Date().getTime();
             const distance = deadline - now;
+
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById("countdown").innerHTML = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+            document.getElementById("countdown").innerHTML =
+                (minutes < 10 ? "0" + minutes : minutes) + ":" +
+                (seconds < 10 ? "0" + seconds : seconds);
+
             if (distance < 0) {
                 clearInterval(x);
                 document.getElementById('payment').style.display = 'none';
